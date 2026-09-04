@@ -72,6 +72,8 @@ ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump"
 
 ZSH_THEME=""
 
+DISABLE_LS_COLORS=true
+
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
 # zstyle ':omz:update' mode auto      # update automatically without asking
