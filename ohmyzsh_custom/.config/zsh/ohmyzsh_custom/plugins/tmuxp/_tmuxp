@@ -1,0 +1,32 @@
+#compdef tmuxp
+#autoload
+
+local curcontext="$curcontext" state line ret=1
+local -a _configs
+
+_arguments -C \
+  '1: :->cmds' \
+  '2:: :->args' && ret=0
+
+_configs=(${$(echo ~/.tmuxp/*.yaml):r:t})
+
+case $state in
+  cmds)
+    _values "tmuxp command" \
+        "convert[Convert tmuxp config to and from JSON and YAML]" \
+        "freeze[Import teamocil config to tmuxp format.]" \
+        "import[Import teamocil/tmuxinator config to tmuxp format]" \
+        "load[Load a tmux workspace from one or multiple CONFIG path to config file, directory with config file or session name.]"
+    ret=0
+    ;;
+  args)
+    case $line[1] in
+      load)
+        [[ -n "$_configs" ]] && _values 'configs' $_configs
+        ret=0
+        ;;
+    esac
+    ;;
+esac
+
+return ret

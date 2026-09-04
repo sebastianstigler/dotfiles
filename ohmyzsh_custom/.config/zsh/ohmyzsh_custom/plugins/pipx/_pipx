@@ -1,0 +1,7 @@
+#compdef pipx
+
+autoload -Uz bashcompinit
+bashcompinit
+
+eval "$(register-python-argcomplete3 pipx)"
+

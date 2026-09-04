@@ -1,0 +1,4 @@
+#compdef jupyter
+autoload bashcompinit
+bashcompinit
+source /home/sebastian/.oh-my-zsh/custom/plugins/jupyter/jupyter-completion.bash
