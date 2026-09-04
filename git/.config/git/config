@@ -1,0 +1,25 @@
+[user]
+	name = Sebastian Stigler
+	email = sebastian.stigler@hs-aalen.de
+[core]
+	editor = vi
+	pager = less --quit-if-one-screen -X
+	autocrlf = input
+[commit]
+	template = ~/.config/git/message
+[color]
+	ui = true
+	branch = auto
+	diff = auto
+	status = auto
+	interactiv = auto
+[alias]
+	l = log --pretty=format:'%C(bold cyan)%h%Creset %s %C(bold blue)%d%Creset' --graph --branches
+	la = log --pretty=format:'%C(bold cyan)%h%Creset %s %C(bold blue)%d%Creset %Cred%an%Creset %Cgreen%cD%Creset ' --graph --all
+	laa = log --pretty=format:'%C(bold cyan)commit %H%C(bold blue)%d%Creset%n%CredAuthor: %an <%ae>%Creset%n%CgreenDate:   %cD%Creset%n%+s%w(76,6,9)%n%+b%w(76,6,9)%nNotes:%+N%w(76,6,9)' --graph --all
+	co = checkout
+	bc = branch-check
+[push]
+	default = matching
+[init]
+	defaultBranch = master
