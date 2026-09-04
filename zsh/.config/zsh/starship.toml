@@ -39,7 +39,7 @@ bg = "236"
 [python]
 style = "fg:31 bg:236"
 symbol= " "
-format= "[${symbol}($virtualenv )]($style)[\u2571](fg:244 bg:236)" 
+format= "[${symbol}($virtualenv )]($style)" 
 
 [os]
 disabled = false
@@ -108,13 +108,13 @@ Zorin = " "
 
 [directory]
 style = "fg:31 bg:236"
-truncation_length = 3
+truncation_length = 5
 truncate_to_repo = true
 truncation_symbol = "…/"
-format = "[\u2571](fg:244 bg:236)[  $path]($style)[$read_only]($style)[ ]($style)"
+format = "[ $path]($style)[$read_only]($style)[ ]($style)"
 
 [git_branch]
-symbol = "[\u2571](fg:244 bg:236)  "
+symbol = " "
 style = "fg:76 bg:236"
 format = "[$symbol$branch]($style)"
 
@@ -139,28 +139,29 @@ style="bg:236"
 disabled = false
 symbol = "[$status ✘](160 bg:236)"
 success_symbol = "[✔](70 bg:236)"
-format = "[ $symbol ]($style)"
+format = "[ $symbol]($style)"
 
 [cmd_duration]
 min_time = 3_000
 style = "fg:248 bg:236"
-format = "[\u2571](fg:244 bg:236)[ $duration  ]($style)"
+format = "[ $duration ]($style)"
 
 [jobs]
 style = "fg:37 bg:236"
 symbol = ""
-format = "[\u2571](fg:244 bg:236)[ $symbol$number ]($style)"
+#format = "[ $symbol$number ]($style)"
+format = "[ $symbol]($style)"
 
 [direnv]
 symbol = " "
 style = "fg:178 bg:236"
-format = "[\u2571](fg:244 bg:236)[ $symbol$loaded/$allowed ]($style)"
+format = "[ $symbol$loaded/$allowed]($style)"
 disabled = false
 
 [username]
 style_user = "bold fg:202 bg:236"
 style_root = "bold fg:196 bg:236"
-format = "[\u2571](fg:244 bg:236)[ 🌐 $user]($style)[@](bold fg:255 bg:236)"
+format = "[ 🌐 $user]($style)[@](bold fg:255 bg:236)"
 show_always = false
 
 [hostname]
