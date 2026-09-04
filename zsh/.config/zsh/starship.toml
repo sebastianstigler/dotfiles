@@ -1,0 +1,173 @@
+# Generated from .p10k.zsh — classic powerline style, 2-line prompt
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[╭─](fg:240)\
+[\uE0BA](fg:236)\
+$python\
+$os\
+$directory\
+$git_branch\
+$git_status\
+[\uE0BC](fg:236)\
+$fill\
+[\uE0BA](fg:236)\
+$status\
+$cmd_duration\
+$jobs\
+$direnv\
+$username$hostname\
+[\uE0BC](fg:236)
+[╰─](fg:240)\
+$character"""
+
+add_newline = false
+palette = "p10k"
+
+[palettes.p10k]
+dir_fg = "31"
+dir_anchor_fg = "39"
+vcs_clean = "76"
+vcs_modified = "178"
+vcs_untracked = "39"
+vcs_conflicted = "196"
+status_ok = "70"
+status_error = "160"
+sep_fg = "244"
+bg = "236"
+
+[python]
+style = "fg:31 bg:236"
+symbol= " "
+format= "[${symbol}($virtualenv )]($style)[\u2571](fg:244 bg:236)" 
+
+[os]
+disabled = false
+style = "bold fg:255 bg:236"
+format = "[ $symbol]($style)"
+
+[os.symbols]
+AIX = " "
+AlmaLinux = " "
+Alpaquita = " "
+Alpine = " "
+ALTLinux = " "
+Amazon = " "
+Android = " "
+AOSC = " "
+Arch = " "
+Artix = " "
+Bluefin = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Elementary = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = " "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = " "
+InstantOS = " "
+Ios = "󰀷 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = " "
+OpenCloudOS = " "
+openEuler = " "
+openSUSE = " "
+OracleLinux = "󰺡 "
+PikaOS = " "
+Pop = " "
+Raspbian = " "
+Redhat = "󱄛 "
+RedHatEnterprise = "󱄛 "
+Redox = "󰀘 "
+RockyLinux = " "
+Solus = " "
+SUSE = " "
+Ubuntu = " "
+Ultramarine = " "
+Unknown = " "
+Uos = " "
+Void = " "
+Windows = "󰍲 "
+Zorin = " "
+
+[directory]
+style = "fg:31 bg:236"
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "…/"
+format = "[\u2571](fg:244 bg:236)[  $path]($style)[$read_only]($style)[ ]($style)"
+
+[git_branch]
+symbol = "[\u2571](fg:244 bg:236)  "
+style = "fg:76 bg:236"
+format = "[$symbol$branch]($style)"
+
+[git_status]
+style = "fg:178 bg:236"
+format = '([ $all_status$ahead_behind]($style))'
+conflicted = "[~${count}](fg:196 bg:236) "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇡${ahead_count}⇣${behind_count} "
+untracked = "[?${count}](fg:39 bg:236) "
+stashed = "*${count} "
+modified = "[!${count}](fg:178 bg:236) "
+staged = "[+${count}](fg:178 bg:236) "
+
+[fill]
+symbol = "."
+
+[status]
+style="bg:236"
+disabled = false
+symbol = "[$status ✘](160 bg:236)"
+success_symbol = "[✔](70 bg:236)"
+format = "[ $symbol ]($style)"
+
+[cmd_duration]
+min_time = 3_000
+style = "fg:248 bg:236"
+format = "[\u2571](fg:244 bg:236)[ $duration  ]($style)"
+
+[jobs]
+style = "fg:37 bg:236"
+symbol = ""
+format = "[\u2571](fg:244 bg:236)[ $symbol$number ]($style)"
+
+[direnv]
+symbol = " "
+style = "fg:178 bg:236"
+format = "[\u2571](fg:244 bg:236)[ $symbol$loaded/$allowed ]($style)"
+disabled = false
+
+[username]
+style_user = "bold fg:202 bg:236"
+style_root = "bold fg:196 bg:236"
+format = "[\u2571](fg:244 bg:236)[ 🌐 $user]($style)[@](bold fg:255 bg:236)"
+show_always = false
+
+[hostname]
+ssh_only = true
+style = "bold fg:202 bg:236"
+format = "[$hostname ]($style)"
+
+[character]
+success_symbol = "[❯](bold fg:76)"
+error_symbol = "[❯](bold fg:196)"
+vimcmd_symbol = "[❮](bold fg:76)"
