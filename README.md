@@ -7,7 +7,7 @@ Powerful but tastefully minimal zsh configuration.
 ### Ubuntu
 
 ```sh
-sudo apt install zsh neovim eza bat fd-find fzf ripgrep just tmux stow curl git direnv
+sudo apt install zsh neovim eza bat fd-find fzf ripgrep just tmux tmuxp stow curl git direnv
 # install zoxide, starship and oh-my-zsh separately
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 curl -sS https://starship.rs/install.sh | sh
@@ -18,10 +18,8 @@ ZSH=$HOME/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyz
 
 **1. Clone the repo**
 
-<!-- TODO: github adapt -->
-
 ```sh
-git clone https://github.com/radleylewis/zsh ~/.config/zsh
+git clone https://github.com/sebastianstigler/dotfiles ~/dotfiles 
 ```
 
 **2. Point zsh at the config directory**
@@ -42,6 +40,8 @@ fi
 
 **3. Set zsh as your default shell**
 
+Only necessary if you didn't let oh-my-zsh do it for you:
+
 ```sh
 chsh -s $(which zsh)
 ```
@@ -56,6 +56,8 @@ mkdir -p ~/.cache/zsh         # completion cache
 **5. Start a new shell**
 
 Plugins are installed automatically on first launch via the built-in plugin manager.
+
+Check individual README.md files for post-installation procedures.
 
 ## Plugins
 
