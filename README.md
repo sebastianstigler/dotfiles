@@ -7,11 +7,13 @@ Powerful but tastefully minimal zsh configuration.
 ### Ubuntu
 
 ```sh
-sudo apt install zsh neovim eza bat fd-find fzf ripgrep just tmux tmuxp stow curl git direnv
+sudo apt install zsh neovim eza bat fd-find ripgrep just tmux tmuxp stow curl git direnv
 # install zoxide, starship and oh-my-zsh separately
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 curl -sS https://starship.rs/install.sh | sh
 ZSH=$HOME/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install --no-zsh
 ```
 
 ## Setup
