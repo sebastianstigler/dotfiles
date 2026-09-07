@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =5
+let g:netrw_dirhist_5='/home/sebastian/projects/oh-my-zsh/custom/themes/powerlevel10k'
+let g:netrw_dirhist_4='/home/sebastian/tmp/01_Hello_World'
+let g:netrw_dirhist_3='/home/sebastian/.zsh/completion'
+let g:netrw_dirhist_2='/home/sebastian/.zsh'
+let g:netrw_dirhist_1='/home/sebastian/PycharmProjects/zipit/tests/testdata'
+let g:netrw_dirhist_0='/home/sebastian/.zsh'
+let g:netrw_dirhist_9='/home/sebastian/projects/htw-aalen/vorlesung/testing_und_debugging/SoSe2026/log'
+let g:netrw_dirhist_8='/home/sebastian/projects/htw-aalen/vorlesung/testing_und_debugging/SoSe2026'
+let g:netrw_dirhist_7='/home/sebastian/projects/htw-aalen/vorlesung/testing_und_debugging/SoSe2026/teilnehmer'
+let g:netrw_dirhist_6='/home/sebastian/PycharmProjects/savedownloadexam/src/savedownloadexam'

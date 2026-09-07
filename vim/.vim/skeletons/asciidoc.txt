@@ -1,0 +1,26 @@
+= <+?TITEL?+>
+:Author:         {sys:git --no-pager log -1 HEAD --pretty=format:"%an"}
+:Email:          {sys:git --no-pager log -1 HEAD --pretty=format:"%ae"}
+:Date:           {sys:git --no-pager log -1 HEAD --pretty=format:"%ai"}
+:Revision:       {sys:git describe --tags}
+:revremark:      {sys:git --no-pager log -1 HEAD --pretty=format:"%s"}
+:Authorinitials: STI
+:lang:           de
+:icons:
+:iconsdir:      /usr/share/asciidoc/images/icons/
+:numbered:
+:data-uri:
+:sectids!:
+:copyright:      (C) <+call:strftime('%Y')+> by <+AUTHOR+>
+
+////
+:Author:       <+AUTHOR+>
+:Email:        <+EMAIL+>
+:Date:         <+DATE+>
+////
+
+<+CURSOR+>
+
+////
+vim: set syntax=asciidoc spell ft=asciidoc:
+////

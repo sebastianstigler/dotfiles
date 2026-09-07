@@ -1,0 +1,19 @@
+
+menu 90.20 TSke&l.background :call tskeleton#ExpandBitUnderCursor("n", 'background')<cr>
+imenu 90.20 TSke&l.background <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'background')<cr>
+menu 90.20 TSke&l.border-bottom :call tskeleton#ExpandBitUnderCursor("n", 'border-bottom')<cr>
+imenu 90.20 TSke&l.border-bottom <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'border-bottom')<cr>
+menu 90.20 TSke&l.border-left :call tskeleton#ExpandBitUnderCursor("n", 'border-left')<cr>
+imenu 90.20 TSke&l.border-left <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'border-left')<cr>
+menu 90.20 TSke&l.border-right :call tskeleton#ExpandBitUnderCursor("n", 'border-right')<cr>
+imenu 90.20 TSke&l.border-right <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'border-right')<cr>
+menu 90.20 TSke&l.border-spacing :call tskeleton#ExpandBitUnderCursor("n", 'border-spacing')<cr>
+imenu 90.20 TSke&l.border-spacing <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'border-spacing')<cr>
+menu 90.20 TSke&l.border-top :call tskeleton#ExpandBitUnderCursor("n", 'border-top')<cr>
+imenu 90.20 TSke&l.border-top <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'border-top')<cr>
+menu 90.20 TSke&l.entry :call tskeleton#ExpandBitUnderCursor("n", 'entry')<cr>
+imenu 90.20 TSke&l.entry <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'entry')<cr>
+menu 90.20 TSke&l.font-size :call tskeleton#ExpandBitUnderCursor("n", 'font-size')<cr>
+imenu 90.20 TSke&l.font-size <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'font-size')<cr>
+menu 90.20 TSke&l.text-align :call tskeleton#ExpandBitUnderCursor("n", 'text-align')<cr>
+imenu 90.20 TSke&l.text-align <c-\><c-o>:call tskeleton#ExpandBitUnderCursor("i", 'text-align')<cr>

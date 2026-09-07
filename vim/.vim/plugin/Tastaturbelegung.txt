@@ -1,0 +1,52 @@
+-------------------------------------------------------------------------------
+    F1       -  Hilfe
+
+    F2       - Rechtschreibung (toggle)
+             ä    - toggle Sprachen (de,en->de->en->de,en)
+             ]s   - nächstes falsche Wort
+             [s   - vorheriges falsche Wort
+             zG   - Wort für die aktuelle Sitzung 
+                    als richtig akzeptieren
+             zg   - Wort als richtig akzeptieren 
+                    und im pers. Wörterbuch speichern 
+             zW   - Wort für die aktuelle Sitzung 
+                    als falsch akzeptieren
+             zw   - Wort als falsch akzeptieren 
+                    und aus pers. Wörterbuch löschen
+             z=   - Korrektur Vorschlag 
+             :spellr  - letzten Korrektur Vorschlag 
+                        auf alle passenden Wörter anwenden 
+
+    F3       -  Färben langer Zeile (toggle)
+
+    F4       -  Pep8
+
+    F5       -  Marke setzen/löschen (toggle)
+    S-F5     -  alle Marken löschen
+    F6       -  nächste Marke
+    F7       -  vorherige Marke
+
+    F8       -  DiffOrig
+
+    F9       - Ausgewählten Text an conque senden 
+    S-F9     - Aktuelle Datei an conque senden
+    F10      - Aktuelle Datei in split conque ausführen 
+    S-F10    - toggel terminal keymapping in conque Fenster 
+
+    F11      -  aktuelle Faltung (toggle)
+    S-F11    -  alle Faltungen (toggle)
+             [z   -  Anfang der Faltung
+             ]z   -  Ende der Faltung
+
+    F12      -  Hex (toggle) 
+
+    _ds      -  Debug-Statusleiste (toggle)
+    \l       -  :set list (toggle)
+    \p       -  :set paste (toggle)
+    \m       -  aktuelles Wort matchen
+    \r       -  reg.Ausdruck zum Matchen
+    C-k      -  Zeile nach oben tauschen
+    C-j      -  Zeile nach unten tauschen
+-------------------------------------------------------------------------------
+
+

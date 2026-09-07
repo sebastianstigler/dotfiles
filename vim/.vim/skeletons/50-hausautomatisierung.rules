@@ -1,0 +1,26 @@
+/* vim: ft=c:ts=4:sta:sw=4:et:ai
+ ************************************************************** UDEV RULEC ****
+ *
+ *   COPYRIGHT (C) 2014 by Sebastian Stigler
+ *
+ *   NAME
+ *       c.c -- udev Regel fuer USB Hausautomatisierung Device
+ *
+ *   DESCRIPTION
+ *       Diese Regel setzt fuer die angegebene idVendor und idProduct die
+ *       angegebene Gruppe.
+ *
+ *   FIRST RELEASE
+ *       2014-04-28  Sebastian Stigler		sebastian.stigler@htw-aalen.de
+ *
+ *****************************************************************************/
+
+/******************************************************************************
+*** loading standard io include-file */ 
+#include <stdio.h> 
+
+/******************************************************************************
+*** XXX */ 
+
+
+/********************************************************************* END ***/

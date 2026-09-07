@@ -1,0 +1,7 @@
+<+CURSOR+>
+
+% <+FILE NAME+>, <+DATE+><+NOTE+>
+% @Last Change: 07-Jan-2005.
+% vi: 
+% Local Variables:
+% End:
