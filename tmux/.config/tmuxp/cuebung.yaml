@@ -1,0 +1,23 @@
+session_name: cuebung
+start_directory: ~/projects/htw-aalen/Stigler/cuebung
+windows:
+    - window_name: redis + server
+      #layout: main-horizontal
+      options:
+        main-pane-height: 10
+      panes:
+        - shell_command:
+            - workon cuebung
+            - python test/testredis.py
+        - shell_command:
+            - workon cuebung
+            - python manager.py celery --loglevel=info
+        - shell_command:
+            - workon cuebung
+            - python manager.py runserver -h 0.0.0.0
+
+    - window_name: editor
+      focus: true
+      panes:
+        - shell_command:
+            - vi

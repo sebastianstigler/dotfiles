@@ -1,0 +1,12 @@
+session_name: micropython_slides
+start_directory: /home/sebastian/projects/htw-aalen/vorlesung/pes/micropython
+windows:
+- window_name: main window
+  layout: main-horizontal
+  options:
+    main-pane-height: 1
+  panes:
+  - shell_command:
+    - evince micropython.md.slides.pdf
+  - shell_command:
+    - vi micropython.md

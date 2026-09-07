@@ -1,0 +1,12 @@
+session_name: ide
+windows:
+  - window_name: IDE
+    focus: true
+    layout: main-horizontal
+    options:
+      main-pane-height: 40
+    panes:
+    - shell_command:
+      - vi
+      focus: true
+    - blank

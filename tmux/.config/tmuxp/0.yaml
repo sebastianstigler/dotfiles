@@ -1,0 +1,15 @@
+session_name: '0'
+windows:
+- focus: 'true'
+  layout: 1538,189x48,0,0[189x41,0,0,0,189x2,0,42,1,189x3,0,45,2]
+  options: {}
+  panes:
+  - shell_command:
+    - cd /home/sebastian/projects/htw-aalen/vorlesung/pes/Teil3_Raspberrypi/2021_FreeRTOS/freertos
+    - vi freertos.md
+  - focus: 'true'
+    shell_command: cd /home/sebastian/projects/htw-aalen/vorlesung/pes/Teil3_Raspberrypi/2021_FreeRTOS/freertos
+  - shell_command:
+    - cd /home/sebastian/projects/htw-aalen/vorlesung/pes/Teil3_Raspberrypi/2021_FreeRTOS/freertos
+    - evince slides_freertos.pdf
+  window_name: zsh

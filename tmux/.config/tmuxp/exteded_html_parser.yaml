@@ -1,0 +1,14 @@
+session_name: extended_html_parser
+start_directory: /home/sebastian/projects/htw-aalen/Stigler/Projekt_Karg
+windows:
+    - windows_name: jupyter
+      panes:
+          - shell_command:
+             - jupyter notebook --ip='*'
+    - window_name: editor
+      start_directory: /home/sebastian/projects/htw-aalen/Stigler/Projekt_Karg/extended_html_parser
+
+      panes:
+          - blank
+          - shell_command:
+              - workon extended_html_parser

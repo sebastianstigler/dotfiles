@@ -1,0 +1,14 @@
+session_name: celery
+start_directory: ~/projects/htw-aalen/Stigler/test/celery
+windows:
+- window_name: main window
+  layout: main-horizontal
+  panes:
+  - shell_command:
+    - workon celery
+  - shell_command:
+    - workon celery
+    - python testredis.py
+  - shell_command:
+    - workon celery
+    - celery -A tasks worker --loglevel=info
