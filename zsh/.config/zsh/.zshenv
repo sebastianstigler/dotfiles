@@ -14,7 +14,6 @@ export VISUAL="vim"
 
 # ---------- Pager ----------
 # from bat v0.25 on add --strip-ansi=always to MANPAGER
-
 if command -v bat >/dev/null 2>&1; then
   export MANPAGER="bat -l man -p"
   export PAGER="bat --paging=always"
