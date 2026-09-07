@@ -12,8 +12,14 @@ sudo apt install zsh neovim eza bat fd-find ripgrep just tmux tmuxp stow curl gi
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 curl -sS https://starship.rs/install.sh | sh
 ZSH=$HOME/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# install fzf
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install --no-zsh
+# install getnf to download nerdfonts (I like the font Meslo)
+# See also: https://gnulinux.ch/nerd-fonts-unter-debian-installieren
+curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash
+getnf
+
 ```
 
 ## Setup
@@ -21,7 +27,10 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 **1. Clone the repo**
 
 ```sh
-git clone https://github.com/sebastianstigler/dotfiles ~/dotfiles 
+git clone https://github.com/sebastianstigler/dotfiles ~/dotfiles
+
+cd ~/dotfiles
+. ./setup.sh
 ```
 
 **2. Point zsh at the config directory**
@@ -51,8 +60,10 @@ chsh -s $(which zsh)
 **4. Create required directories**
 
 ```sh
-mkdir -p ~/.local/state/zsh   # history
-mkdir -p ~/.cache/zsh         # completion cache
+# history
+mkdir -p ~/.local/state/zsh
+# completion cache
+mkdir -p ~/.cache/zsh
 ```
 
 **5. Start a new shell**
