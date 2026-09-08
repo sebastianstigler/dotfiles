@@ -137,9 +137,10 @@ symbol = "."
 [status]
 style="bg:236"
 disabled = false
-symbol = "[$status ✘](160 bg:236)"
+symbol = "[$common_meaning$maybe_int ✘](160 bg:236)"
 success_symbol = "[✔](70 bg:236)"
-format = "[ $symbol]($style)"
+format = '[$symbol( [$signal_name](fg:178 bg:236))]($style)'
+map_symbol = true
 
 [cmd_duration]
 min_time = 3_000
