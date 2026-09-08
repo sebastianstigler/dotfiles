@@ -19,7 +19,6 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 # See also: https://gnulinux.ch/nerd-fonts-unter-debian-installieren
 curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash
 getnf
-
 ```
 
 ## Setup
@@ -76,12 +75,12 @@ Check individual README.md files for post-installation procedures.
 
 Managed without a third-party plugin manager. Plugins are cloned into `$ZDOTDIR/plugins/` on first launch.
 
-| Plugin | Purpose |
-|--------|---------|
-| [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting) | Syntax highlighting |
-| [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) | Fish-style inline suggestions |
+| Plugin                                                                                    | Purpose                         |
+| ----------------------------------------------------------------------------------------- | ------------------------------- |
+| [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting) | Syntax highlighting             |
+| [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)                   | Fish-style inline suggestions   |
 | [zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search) | Up/down arrow history filtering |
-| [zsh-vi-mode](https://github.com/jeffreytse/zsh-vi-mode) | Vi keybindings |
+| [zsh-vi-mode](https://github.com/jeffreytse/zsh-vi-mode)                                  | Vi keybindings                  |
 
 To update all plugins:
 
@@ -91,15 +90,15 @@ zplugin-update
 
 ## Keybindings
 
-| Key | Action |
-|-----|--------|
-| `Ctrl+R` | Fuzzy history search (fzf) |
-| `Ctrl+T` | Fuzzy file search including hidden files (fzf + fd) |
-| `Ctrl+F` | Fuzzy file search excluding hidden files (fzf + fd) |
-| `Ctrl+→` | Move forward one word |
-| `Ctrl+←` | Move backward one word |
-| `↑` / `↓` | History search by prefix |
-| `Ctrl+\` | Toggle autosuggestions |
+| Key       | Action                                              |
+| --------- | --------------------------------------------------- |
+| `Ctrl+R`  | Fuzzy history search (fzf)                          |
+| `Ctrl+T`  | Fuzzy file search including hidden files (fzf + fd) |
+| `Ctrl+F`  | Fuzzy file search excluding hidden files (fzf + fd) |
+| `Ctrl+→`  | Move forward one word                               |
+| `Ctrl+←`  | Move backward one word                              |
+| `↑` / `↓` | History search by prefix                            |
+| `Ctrl+\`  | Toggle autosuggestions                              |
 
 ## Starship Config
 
