@@ -8,22 +8,46 @@ Powerful but tastefully minimal zsh configuration.
 
 ```sh
 sudo apt install zsh eza bat fd-find ripgrep just tmux tmuxp stow curl git direnv clangd luarocks
+
 # install neovim from appimage 0.11.7
 mkdir -p ~/.local/{neovim.app,bin} && cd ~/.local/neovim.app
-curl -LO https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.appimage 
+curl -LO https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.appimage
 chmod +x nvim-linux-x86_64.appimage
 ln -s ~/.local/neovim.app/nvim-linux-x86_64.appimage ~/.local/bin/nvim
+
 # install zoxide, starship and oh-my-zsh separately
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 curl -sS https://starship.rs/install.sh | sh
 ZSH=$HOME/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
 # install fzf
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install --no-zsh
+
 # install getnf to download nerdfonts (I like the font Meslo)
+
 # See also: https://gnulinux.ch/nerd-fonts-unter-debian-installieren
 curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash
 getnf
+
+# install kitty
+
+curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+# Create symbolic links to add kitty and kitten to PATH (assuming ~/.local/bin is in
+# your system-wide PATH)
+ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
+# Place the kitty.desktop file somewhere it can be found by the OS
+cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+# If you want to open text files and images in kitty via your file manager also add the kitty-open.desktop file
+cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
+# Update the paths to the kitty and its icon in the kitty desktop file(s)
+sed -i "s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
+sed -i "s|Exec=kitty|Exec=$(readlink -f ~)/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
+# Make xdg-terminal-exec (and hence desktop environments that support it use kitty)
+echo 'kitty.desktop' > ~/.config/xdg-terminals.list
+
+
+
 ```
 
 ## Setup
