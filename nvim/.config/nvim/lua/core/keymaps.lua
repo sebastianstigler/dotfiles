@@ -29,10 +29,10 @@ vim.keymap.set('n', 'n', 'nzzzv', opts)
 vim.keymap.set('n', 'N', 'Nzzzv', opts)
 
 -- Resize with arrows
---vim.keymap.set('n', '<Up>', ':resize -2<CR>', opts)
---vim.keymap.set('n', '<Down>', ':resize +2<CR>', opts)
---vim.keymap.set('n', '<Left>', ':vertical resize -2<CR>', opts)
---vim.keymap.set('n', '<Right>', ':vertical resize +2<CR>', opts)
+vim.keymap.set('n', '<S-Up>', ':resize -2<CR>', opts)
+vim.keymap.set('n', '<S-Down>', ':resize +2<CR>', opts)
+vim.keymap.set('n', '<S-Left>', ':vertical resize -2<CR>', opts)
+vim.keymap.set('n', '<S-Right>', ':vertical resize +2<CR>', opts)
 
 -- Buffers
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', opts)
@@ -67,6 +67,10 @@ vim.keymap.set('v', '>', '>gv', opts)
 
 -- Keep last yanked when pasting
 vim.keymap.set('v', 'p', '"_dP', opts)
+
+-- Move marked block down(K) / up(J)
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', function()
