@@ -31,3 +31,9 @@ zvm_after_init() {
   bindkey '^[[A' history-substring-search-up
   bindkey '^[[B' history-substring-search-down
 }
+
+#Make HOME and END work in tmux
+if [[ -n "$TMUX" ]]; then
+    bindkey '^[[1~' beginning-of-line
+    bindkey '^[[4~' end-of-line
+fi
