@@ -10,9 +10,10 @@ alias fd='fdfind'
 # ---------- Batcat ----------
 # Completion comes with apt package.
 # Use completion from batcat for alias.
-alias bat='batcat'
-compdef bat=batcat
-
+if command -v batcat >/dev/null 2>&1; then
+  alias bat='batcat'
+  compdef bat=batcat
+fi
 # ---------- Neovim ----------
 # Completion comes with apt package.
 # Use completion from nvim for alias.
