@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ "$(ufw status|head -1 | cut -d':' -f2)x" == " Inaktivx" ]
+then
+		echo -n '${color4}'
+else
+		echo -n '${color5}'
+fi

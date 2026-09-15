@@ -1,0 +1,3 @@
+#!/bin/bash
+# eigene öffentliche ip anzeigen
+curl https://image.informatik.htw-aalen.de/\~stigler/assets/php/ip.php 2>/dev/null | jq -r '.client_ip'
