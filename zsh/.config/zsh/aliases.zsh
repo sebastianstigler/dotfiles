@@ -19,7 +19,9 @@ compdef bat=batcat
 # Set in .zshenv EDITOR and and VISUAL
 # to nvim when switch to nvim is complete!
 alias v='nvim'
+alias vi='nvim'
 compdef v=nvim
+compdef vi=nvim
 
 # ---------- Eza ----------
 # Aliases are mangeged by oh-my-zsh

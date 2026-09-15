@@ -9,8 +9,8 @@ export XDG_STATE_HOME="$HOME/.local/state"
 
 # ---------- Editor ----------
 # Default editor used by git, crontab, etc.
-export EDITOR="vim"
-export VISUAL="vim"
+export EDITOR="nvim"
+export VISUAL="nvim"
 
 # ---------- Pager ----------
 # from bat v0.25 on add --strip-ansi=always to MANPAGER
@@ -32,6 +32,7 @@ export ZSH_CUSTOM="$ZDOTDIR/ohmyzsh_custom"
 # ---------- Starship ----------
 export STARSHIP_CONFIG="$ZDOTDIR/starship.toml"
 export FZF_DEFAULT_OPTS='--height 60% --popup 100%,60% --style full'
+
 # ---------- fzf ----------
 # Default options
 
