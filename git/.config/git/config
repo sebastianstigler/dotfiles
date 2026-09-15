@@ -2,8 +2,8 @@
 	name = Sebastian Stigler
 	email = sebastian.stigler@hs-aalen.de
 [core]
-	editor = vi
-	pager = less --quit-if-one-screen -X
+	editor = nvim
+    pager = bat --style=plain
 	autocrlf = input
 [commit]
 	template = ~/.config/git/message
