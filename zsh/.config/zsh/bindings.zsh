@@ -37,3 +37,6 @@ if [[ -n "$TMUX" ]]; then
     bindkey '^[[1~' beginning-of-line
     bindkey '^[[4~' end-of-line
 fi
+
+#bindkey '^[[H' beginning-of-line
+#bindkey '^[[F' end-of-line
