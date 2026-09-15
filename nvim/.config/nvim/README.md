@@ -17,8 +17,8 @@ Want to follow along and set this up from scratch? Watch the full video guide:
 - Install node before the first start of neovim
 
 ```sh
-# install nvm + install node lts version for neovim config
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
+# install nvm without adding to .zshrc + install node lts version for neovim config
+PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash'
 exec zsh
 nvm install --lts
 ```
