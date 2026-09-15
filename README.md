@@ -7,7 +7,14 @@ Powerful but tastefully minimal zsh configuration.
 ### Ubuntu
 
 ```sh
-sudo apt install zsh eza bat fd-find ripgrep just tmux tmuxp stow curl git direnv clangd luarocks
+# install bat from source
+wget https://github.com/sharkdp/bat/releases/download/v0.26.1/bat_0.26.1_amd64.deb
+sudo dpkg -i bat_0.26.1_amd64.deb
+# or from repository (ubuntu 24.04 version has problems when bat is used as MANPAGER)
+sudo apt install bat
+
+# install remainding
+sudo apt install zsh eza fd-find ripgrep just tmux tmuxp stow curl git direnv clangd luarocks
 
 # install neovim from appimage 0.11.7
 mkdir -p ~/.local/{neovim.app,bin} && cd ~/.local/neovim.app
