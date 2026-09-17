@@ -7,13 +7,14 @@ FUNCNEST=100
 
 eval "$(starship init zsh)"
 
-# Starship Transient Prompt Workaround for Zsh
+# Save the normal Starship prompt
+starship_zsh_prompt="$PROMPT"
+
+# # Starship Transient Prompt Workaround for Zsh
 starship_zle-line-init() {
-    if [[ "$CONTEXT" == start ]]; then
-        # Re-render the full Starship prompt for active input
-        PROMPT=$(starship prompt)
-        zle reset-prompt
-    fi
+    # Restore Starship's full prompt when starting a new command
+    PROMPT="$starship_zsh_prompt"
+    zle reset-prompt
 }
 
 starship_zle-line-finish() {
