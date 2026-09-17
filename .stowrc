@@ -2,4 +2,4 @@
 --ignore=.stowrc
 --ignore=setup.sh
 --ignore=README.md
-
+--ignore=justfile
