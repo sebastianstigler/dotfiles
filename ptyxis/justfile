@@ -6,7 +6,6 @@ font := "MesloLGS Nerd Font"
 fontsize := "12"
 opacity := "0.9"
 palette := "Catppuccin Mocha"
-#palette := "Gnome"
 
 ## Install ptyxis via apt
 apt_gsettings := "gsettings"
@@ -18,6 +17,7 @@ gsettings := if install_method == "apt" { apt_gsettings } else { flatpak_gsettin
 gs_base_schema := "org.gnome.Ptyxis"
 gs_profile_schema := "org.gnome.Ptyxis.Profile:/org/gnome/Ptyxis/Profiles/PTYXIS_PROFILE/"
 
+ptyxis_wrapper := "/usr/bin/ptyxis.wrapper"
 
 _default:
     @echo "Expressions:"
@@ -40,12 +40,10 @@ settings:
     just _settings $(echo $profile)
 
 _check_font:
-    #!/usr/bin/bash
-    if [[ "$(fc-match "{{ font }}" -f '%{family}')" == "{{ font }}" ]]; then
-      echo -e " ⚡ \e[31;1mFont \e[0;34;4m{{ font }}\e[0;31;1m is not installed!\e[0m ⚡"
-      echo -e "    \e[33;1mUse \e[0;36;3mgetnf\e[0;33;1m to install it.\e[0m"
-      exit 1
-    fi
+    @[ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ] || (\
+    echo " ⚡ \e[31;1mFont \e[0;34;4m{{ font }}\e[0;31;1m is not installed!\e[0m ⚡"; \
+    echo "    \e[33;1mUse \e[0;36;3mgetnf\e[0;33;1m to install it.\e[0m"; \
+    exit 1; )
 
 _settings PROFILE: _check_font
     @echo -n "🎁  \e[34;1mSettings for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0;34;1m for profile \e[0;36m{{ PROFILE }}\e[0m\n    "
@@ -56,9 +54,11 @@ _settings PROFILE: _check_font
     {{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} opacity {{ opacity }}
 
 
-@_install_requirements METHOD: 
-    [ {{ METHOD }} = "apt" ] || [ {{ METHOD }} = "flatpak" ] || (echo -e" ⚡ \e[31;1mArgument \e[0;36;4mMETHOD\e[0;31;1m must be \e[0;36mapt\e[0;31;1m or \e[0;36mflatpak\e[0m ⚡"; exit 1)
-    just _{{ METHOD }}_install_requirements
+_install_requirements METHOD: 
+    @[ {{ METHOD }} = "apt" ] || [ {{ METHOD }} = "flatpak" ] || (\
+    echo " ⚡ \e[31;1mArgument \e[0;36;4mMETHOD / install_method\e[0;31;1m must be \e[0;36mapt\e[0;31;1m or \e[0;36mflatpak\e[0m ⚡";\
+    exit 1; )
+    @just _{{ METHOD }}_install_requirements
 
 _apt_install_requirements:
     @sudo apt update && sudo apt install ptyxis -y
@@ -66,6 +66,14 @@ _apt_install_requirements:
 _flatpak_install_requirements:
     @if !command -v flatpak >/dev/null 2>&1; then sudo apt update && sudo apt install flatpak -y; fi
     @flatpak install flathub app.devsuite.Ptyxis
+    @[ -f {{ ptyxis_wrapper }} ] || (\
+    echo '#!/bin/sh' | sudo tee {{ ptyxis_wrapper }} > /dev/null; \
+    echo "flatpak run app.devsuite.Ptyxis --new-window" | sudo tee -a {{ ptyxis_wrapper }} > /dev/null; \
+    sudo chmod a+x {{ ptyxis_wrapper }}; \
+    sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator {{ ptyxis_wrapper }} 10; \
+    )
+    @echo ""
+    @echo " ‼️  \e[33;1mUse \e[0;36;3msudo update-alternatives --config x-terminal-emulator\e[0;33;1m to set default teminal."
 
 
 
