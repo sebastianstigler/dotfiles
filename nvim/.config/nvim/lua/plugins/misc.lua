@@ -19,6 +19,9 @@ return {
   {
     -- Hints keybinds
     'folke/which-key.nvim',
+    opts = {
+      delay = 1000,
+    },
   },
   {
     -- Autoclose parentheses, brackets, quotes, etc.
