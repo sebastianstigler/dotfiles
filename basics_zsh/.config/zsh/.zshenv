@@ -15,7 +15,7 @@ export VISUAL="nvim"
 # ---------- Pager ----------
 # from bat v0.25 on add --strip-ansi=always to MANPAGER
 if command -v bat >/dev/null 2>&1; then
-  export MANPAGER="bat -l man -p"
+  export MANPAGER="bat -l man -p --strip-ansi=always"
   export PAGER="bat --paging=always"
 elif command -v batcat >/dev/null 2>&1; then
   export MANPAGER="batcat -l man -p"
@@ -62,5 +62,8 @@ _fzf_comprun() {
 
 # ---------- PATH ----------
 # Personal binaries/scripts
+if [[ -d "$HOME/bin" ]]; then
+  export PATH="$HOME/bin":$PATH
+fi
 export PATH="$HOME/.local/bin:$PATH"
 

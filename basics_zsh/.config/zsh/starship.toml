@@ -43,7 +43,7 @@ format= "[${symbol}($virtualenv )]($style)"
 
 [os]
 disabled = false
-style = "bold fg:255 bg:236"
+style = "bold fg:202 bg:236"
 format = "[ $symbol]($style)"
 
 [os.symbols]
@@ -98,7 +98,7 @@ Redox = "󰀘 "
 RockyLinux = " "
 Solus = " "
 SUSE = " "
-Ubuntu = " "
+Ubuntu  = "󰕈 "
 Ultramarine = " "
 Unknown = " "
 Uos = " "
