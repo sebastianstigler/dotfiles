@@ -52,8 +52,9 @@ install_requirements: && (_install_requirements install_method)
 
 # Set my prefered settings
 settings:
-    @profile=$({{ gsettings }} get {{ gs_base_schema }} default-profile-uuid 2>/dev/null); \
-    just _settings $(echo $profile)
+    @profile=$({{ gsettings }} get {{ gs_base_schema }} default-profile-uuid 2>/dev/null | sed "s/'//g"); \
+    echo "🎁  \e[34;1mSettings for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0;34;1m for profile \e[0;36m${profile}\e[0m"; \
+    just _settings $profile
 
 _check_font:
     @[ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ] || (\
@@ -63,22 +64,22 @@ _check_font:
     )
 
 _settings PROFILE: _check_font
-    @echo -n "🎁  \e[34;1mSettings for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0;34;1m for profile \e[0;36m{{ PROFILE }}\e[0m\n    "
-    {{ gsettings }} set {{ gs_base_schema }} use-system-font {{ use_system_font }}
-    @echo -n "    "
-    {{ gsettings }} set {{ gs_base_schema }} font-name "{{ font }} {{ fontsize }}"
-    @echo -n "    "
-    {{ gsettings }} set {{ gs_base_schema }} default-columns {{ default_columns }}
-    @echo -n "    "
-    {{ gsettings }} set {{ gs_base_schema }} default-rows {{ default_rows }}
-    @echo -n "    "
-    {{ gsettings }} set {{ gs_base_schema }} restore-session {{ restore_session }}
-    @echo -n "    "
-    {{ gsettings }} set {{ gs_base_schema }} restore-window-size {{ restore_window_size }}
-    @echo -n "    "
-    {{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} palette "{{ palette }}"
-    @echo -n "    "
-    {{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} opacity {{ opacity }}
+    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36muse-system-font\e[0m → \e[0;36m{{ use_system_font}}\e[0m"
+    @{{ gsettings }} set {{ gs_base_schema }} use-system-font {{ use_system_font }}
+    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mfont-name\e[0m → \e[0;36m\"{{ font }} {{ fontsize }}\"\e[0m"
+    @{{ gsettings }} set {{ gs_base_schema }} font-name "{{ font }} {{ fontsize }}"
+    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mdefault-columns\e[0m → \e[0;36m{{ default_columns}}\e[0m"
+    @{{ gsettings }} set {{ gs_base_schema }} default-columns {{ default_columns }}
+    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mdefault-rows\e[0m → \e[0;36m{{ default_rows }}\e[0m"
+    @{{ gsettings }} set {{ gs_base_schema }} default-rows {{ default_rows }}
+    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mrestore-session\e[0m → \e[0;36m{{ restore_session }}\e[0m"
+    @{{ gsettings }} set {{ gs_base_schema }} restore-session {{ restore_session }}
+    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mrestore-window-size\e[0m → \e[0;36m{{ restore_window_size }}\e[0m"
+    @{{ gsettings }} set {{ gs_base_schema }} restore-window-size {{ restore_window_size }}
+    @echo "    \e[33;1m• \e[34;1mSet for defaulp profil: \e[0;36mpalette\e[0m → \e[0;36m\"{{ palette }}\"\e[0m"
+    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} palette "{{ palette }}"
+    @echo "    \e[33;1m• \e[34;1mSet for defaulp profil: \e[0;36mopacity\e[0m → \e[0;36m{{ opacity }}\e[0m"
+    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} opacity {{ opacity }}
 
 _install_requirements METHOD:
     @[ {{ METHOD }} = "apt" ] || [ {{ METHOD }} = "flatpak" ] || (\
@@ -90,13 +91,13 @@ _apt_install_requirements:
     @sudo apt update && sudo apt install ptyxis -y
 
 _flatpak_install_requirements:
-    @if !command -v flatpak >/dev/null 2>&1; then sudo apt update && sudo apt install flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org; fi
-    @flatpak install flathub app.devsuite.Ptyxis
+    @if ! command -v flatpak >/dev/null 2>&1; then sudo apt update && sudo apt install flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org; fi
+    @flatpak install --noninteractive flathub app.devsuite.Ptyxis
     @[ -f {{ ptyxis_wrapper }} ] || (\
     echo '#!/bin/sh' | sudo tee {{ ptyxis_wrapper }} > /dev/null; \
     echo "flatpak run app.devsuite.Ptyxis --new-window" | sudo tee -a {{ ptyxis_wrapper }} > /dev/null; \
     sudo chmod a+x {{ ptyxis_wrapper }}; \
     sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator {{ ptyxis_wrapper }} 10; \
     )
-    @echo ""
-    @echo " ‼️  \e[33;1mUse \e[0;36;3msudo update-alternatives --config x-terminal-emulator\e[0;33;1m to set default teminal."
+    @echo "    \e[31;1m╰─❯ \e[33;1mTo set default teminal run:"
+    @echo "        \e[0;36;3msudo update-alternatives --config x-terminal-emulator\e[0m"
