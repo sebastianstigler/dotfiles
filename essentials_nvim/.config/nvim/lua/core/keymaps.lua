@@ -83,3 +83,30 @@ end, { desc = 'Go to next diagnostic message' })
 
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+-- Show changes in an unsaved file to the saved version
+vim.api.nvim_create_user_command('DiffOrig', function()
+  local current_buf = vim.api.nvim_get_current_buf()
+  local file = vim.api.nvim_buf_get_name(current_buf)
+
+  -- Open a vertical split
+  vim.cmd 'vnew'
+
+  local diff_buf = vim.api.nvim_get_current_buf()
+
+  -- Read the saved file
+  vim.fn.readfile(file, '', -1)
+  vim.api.nvim_buf_set_lines(diff_buf, 0, -1, false, vim.fn.readfile(file))
+
+  vim.bo[diff_buf].buftype = 'nofile'
+  vim.bo[diff_buf].bufhidden = 'wipe'
+  vim.bo[diff_buf].swapfile = false
+  vim.bo[diff_buf].modifiable = false
+
+  vim.cmd 'diffthis'
+  vim.cmd 'wincmd p'
+  vim.cmd 'diffthis'
+end, {})
+
+vim.keymap.set('n', '<F8>', '<cmd>DiffOrig<CR>', { silent = true })
+vim.keymap.set('i', '<F8>', '<Esc><cmd>DiffOrig<CR>', { silent = true })
