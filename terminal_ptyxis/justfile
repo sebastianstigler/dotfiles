@@ -1,3 +1,7 @@
+apt_pkgs := "ptyxis"
+# run apt update if the cache is older the ... minutes
+apt_cache_refresh_age := "60"
+
 #install_method := "apt"
 install_method := "flatpak"
 getnf_font := "Meslo"
@@ -18,12 +22,13 @@ palette := "Catppuccin Mocha"
 ## Install ptyxis via apt
 apt_gsettings := "gsettings"
 # Install ptyxis via flatpak
-flatpak_gsettings := "flatpak run --command=gsettings app.devsuite.Ptyxis"
+flatpak_pkgs := "app.devsuite.Ptyxis"
+flatpak_gsettings := "flatpak run --command=gsettings " + flatpak_pkgs
 
 gsettings := if install_method == "apt" { apt_gsettings } else { flatpak_gsettings }
 
 gs_base_schema := "org.gnome.Ptyxis"
-gs_profile_schema := "org.gnome.Ptyxis.Profile:/org/gnome/Ptyxis/Profiles/PTYXIS_PROFILE/"
+gs_profile_schema := gs_base_schema + ".Profile:/org/gnome/Ptyxis/Profiles/PTYXIS_PROFILE/"
 
 ptyxis_wrapper := "/usr/bin/ptyxis.wrapper"
 
@@ -46,12 +51,17 @@ _default:
     @echo
     @just --list --unsorted
 
-# Install the Ptyxis terminal
-install_requirements: && (_install_requirements install_method)
-    @echo -n "🎁  \e[34;1mInstall requirements for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0;34;1m with install method \e[0;36m{{ install_method }}\e[0m\n    "
+_done:
+    @echo
+    @echo "    ✨✨  \e[32;1mFinished\e[0m  ✨✨"
+    @echo
+
+# Install ptyxis dependencies
+bootstrap: && (_install_requirements install_method) _done
+    @echo "🎁  \e[34;1mInstall dependencies for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0;34;1m with install method \e[0;36m{{ install_method }}\e[0m"
 
 # Set my prefered settings
-settings:
+settings: && _done
     @profile=$({{ gsettings }} get {{ gs_base_schema }} default-profile-uuid 2>/dev/null | sed "s/'//g"); \
     echo "🎁  \e[34;1mSettings for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0;34;1m for profile \e[0;36m${profile}\e[0m"; \
     just _settings $profile
@@ -64,11 +74,11 @@ _check_font:
     )
 
 _settings PROFILE: _check_font
-    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36muse-system-font\e[0m → \e[0;36m{{ use_system_font}}\e[0m"
+    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36muse-system-font\e[0m → \e[0;36m{{ use_system_font }}\e[0m"
     @{{ gsettings }} set {{ gs_base_schema }} use-system-font {{ use_system_font }}
     @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mfont-name\e[0m → \e[0;36m\"{{ font }} {{ fontsize }}\"\e[0m"
     @{{ gsettings }} set {{ gs_base_schema }} font-name "{{ font }} {{ fontsize }}"
-    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mdefault-columns\e[0m → \e[0;36m{{ default_columns}}\e[0m"
+    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mdefault-columns\e[0m → \e[0;36m{{ default_columns }}\e[0m"
     @{{ gsettings }} set {{ gs_base_schema }} default-columns {{ default_columns }}
     @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mdefault-rows\e[0m → \e[0;36m{{ default_rows }}\e[0m"
     @{{ gsettings }} set {{ gs_base_schema }} default-rows {{ default_rows }}
@@ -88,16 +98,50 @@ _install_requirements METHOD:
     @just _{{ METHOD }}_install_requirements
 
 _apt_install_requirements:
-    @sudo apt update && sudo apt install ptyxis -y
+    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mapt\e[34;1m packages\e[0m"
+    @dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1 \
+    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
+    || (\
+    echo ''; \
+    if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
+    echo "      • \e[35mUpdate apt cache\e[0m"; \
+    sudo apt-get update >/dev/null; \
+    fi; \
+    echo "      • \e[35mInstall: \e[1;35m{{ apt_pkgs }}\e[0m"; \
+    sudo apt-get install {{ apt_pkgs }} -y >/dev/null; \
+    )
 
-_flatpak_install_requirements:
-    @if ! command -v flatpak >/dev/null 2>&1; then sudo apt update && sudo apt install flatpak -y && flatpak remote-add --if-not-exists flathub https://flathub.org; fi
-    @flatpak install --noninteractive flathub app.devsuite.Ptyxis
-    @[ -f {{ ptyxis_wrapper }} ] || (\
+_flatpak_apt_install:
+    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mflatpak\e[34;1m apt package\e[0m"
+    @dpkg-query -s flatpak >/dev/null 2>&1 \
+    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
+    || (\
+    echo ''; \
+    if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
+    echo "      • \e[35mUpdate apt cache\e[0m"; \
+    sudo apt-get update >/dev/null; \
+    fi; \
+    echo "      • \e[35mInstall: \e[1;35mflatpak\e[0m"; \
+    sudo apt-get install flatpak -y >/dev/null; \
+    echo "      • \e[35mConfigure remote: \e[1;35mflathub.org\e[0m"; \
+    flatpak remote-add --if-not-exists flathub https://flathub.org ; \
+    )
+
+_flatpak_install_requirements: _flatpak_apt_install
+    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36m{{ flatpak_pkgs }}\e[34;1m\e[0m"
+    @flatpak info {{ flatpak_pkgs }} -r >/dev/null 2>&1 \
+    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
+    || (\
+    echo ''; \
+    flatpak install --noninteractive flathub {{ flatpak_pkgs }} >/dev/null 2>&1; \
+    if [ ! -f {{ ptyxis_wrapper }} ]; then \
+    echo "      • \e[35mInstall wrapper script: \e[1;35m{{ ptyxis_wrapper }}\e[0m"; \
     echo '#!/bin/sh' | sudo tee {{ ptyxis_wrapper }} > /dev/null; \
     echo "flatpak run app.devsuite.Ptyxis --new-window" | sudo tee -a {{ ptyxis_wrapper }} > /dev/null; \
     sudo chmod a+x {{ ptyxis_wrapper }}; \
+    echo "      • \e[35mRegister wrapper for \e[1;35mupdate-alternatives\e[0m"; \
     sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator {{ ptyxis_wrapper }} 10; \
+    fi; \
+    echo "    \e[31;1m╰─❯ \e[33;1mTo set default teminal run:"; \
+    echo "        \e[0;36;3msudo update-alternatives --config x-terminal-emulator\e[0m"; \
     )
-    @echo "    \e[31;1m╰─❯ \e[33;1mTo set default teminal run:"
-    @echo "        \e[0;36;3msudo update-alternatives --config x-terminal-emulator\e[0m"
