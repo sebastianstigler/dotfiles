@@ -1,8 +1,7 @@
 apt_pkgs := "tmux tmuxp"
 
 # run apt update if the cache is older the ... minutes
-#apt_cache_refresh_age :="60"
-apt_cache_refresh_age :="1"
+apt_cache_refresh_age :="60"
 
 _default:
     @just --list --unsorted 
