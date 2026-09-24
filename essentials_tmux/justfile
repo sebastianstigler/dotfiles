@@ -1,3 +1,6 @@
+set dotenv-filename := '../.env'
+set dotenv-load
+
 apt_pkgs := "tmux tmuxp"
 
 # run apt update if the cache is older the ... minutes
@@ -7,37 +10,29 @@ _default:
     @just --list --unsorted 
 
 _done:
-    @echo
-    @echo "    ✨✨  \e[32;1mFinished\e[0m  ✨✨"
-    @echo
+    @echo "${UI_FINISHED}"
 
 # Install tmux dependencies
 bootstrap: && _install_apt_pkgs _install_tpm _done
-    @echo "🎁  \e[34;1mInstall dependencies for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0m"
+    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
 
 _install_apt_pkgs:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mapt\e[34;1m packages\e[0m"
-    @dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1 \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}apt${UI_SCOL} packages${UI_NORMAL}"
+    @if dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
     if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
-    echo "      • \e[35mUpdate apt cache\e[0m"; \
+    echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
     sudo apt-get update >/dev/null; \
     fi; \
-    echo "      • \e[35mInstall: \e[1;35m{{ apt_pkgs }}\e[0m"; \
+    echo "${UI_PSYM}Install: ${UI_PHIC}{{ apt_pkgs }}${UI_NORMAL}"; \
     sudo apt-get install {{ apt_pkgs }} -y >/dev/null; \
-    )
+    fi
 
 _install_tpm:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mtpm\e[0m"
-    @[ -f ~/.tmux/plugins/tpm/tpm ] \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}tpm${UI_NORMAL}"
+    @if [ -f ~/.tmux/plugins/tpm/tpm ]; then echo $UI_SKIPPED; else echo ""; \
     mkdir -p ~/.tmux/plugins; \
-    echo "      • \e[35mGit clone \e[1;35mtpm\e[0;35m repo\e[0m"; \
+    echo "${UI_PSYM}Git clone ${UI_PHIC}tpm${UI_PCOL} repo${UI_NORMAL}"; \
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm >/dev/null 2>&1; \
-    echo "      \e[31;1m╰─❯ \e[0;33;1mOpen \e[0;36;3mtmux\e[0;33;1m and use the following key-combo to install the plugins:\e[0m"; \
-    echo "            \e[0;36;3m<Ctrl>+<a> <Shift>+<i>\e[0m"; \
-    )
+    echo "${UI_ASYM}Open ${UI_AHIC}tmux${UI_ACOL} and use the following key-combo to install the plugins:${UI_NORMAL}"; \
+    echo "${UI_AIND}${UI_AHIC}<Ctrl>+<a> <Shift>+<i>${UI_NORMAL}"; \
+    fi

@@ -1,3 +1,6 @@
+set dotenv-filename := "../.env"
+set dotenv-load
+
 apt_pkgs := "ptyxis"
 # run apt update if the cache is older the ... minutes
 apt_cache_refresh_age := "60"
@@ -34,9 +37,10 @@ ptyxis_wrapper := "/usr/bin/ptyxis.wrapper"
 
 _default:
     @echo "Expressions:"
+    @echo "  \e[33;3mInstall settings:\e[0m"
     @echo "    \e[36minstall_method\e[0m:      \e[32m{{ install_method }}\e[0m"
     @echo ""
-    @echo "  \e[33mGlobal settings:\e[0m"
+    @echo "  \e[33;3mGlobal Ptyxis settings:\e[0m"
     @echo "    \e[36muse_system_font\e[0m:     \e[32m{{ use_system_font }}\e[0m"
     @echo "    \e[36mfont\e[0m:                \e[32m{{ quote(font) }}\e[0m"
     @echo "    \e[36mfontsize\e[0m:            \e[32m{{ fontsize }}\e[0m"
@@ -45,103 +49,91 @@ _default:
     @echo "    \e[36mrestore_session\e[0m:     \e[32m{{ restore_session }}\e[0m"
     @echo "    \e[36mrestore_window_size\e[0m: \e[32m{{ restore_window_size }}\e[0m"
     @echo ""
-    @echo "  \e[33mProfile settings:\e[0m"
+    @echo "  \e[33;3mProfile Ptyxis settings:\e[0m"
     @echo "    \e[36mopacity\e[0m:             \e[32m{{ opacity }}\e[0m"
     @echo "    \e[36mpalette\e[0m:             \e[32m{{ quote(palette) }}\e[0m"
     @echo
     @just --list --unsorted
 
 _done:
-    @echo
-    @echo "    ✨✨  \e[32;1mFinished\e[0m  ✨✨"
-    @echo
+    @echo "${UI_FINISHED}"
 
 # Install ptyxis dependencies
 bootstrap: && (_install_requirements install_method) _done
-    @echo "🎁  \e[34;1mInstall dependencies for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0;34;1m with install method \e[0;36m{{ install_method }}\e[0m"
+    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_RCOL} with install method ${UI_RHIC}{{ install_method }}${UI_NORMAL}"
 
 # Set my prefered settings
 settings: && _done
     @profile=$({{ gsettings }} get {{ gs_base_schema }} default-profile-uuid 2>/dev/null | sed "s/'//g"); \
-    echo "🎁  \e[34;1mSettings for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0;34;1m for profile \e[0;36m${profile}\e[0m"; \
+    echo "${UI_RSYM}Settings for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_RCOL} for profile ${UI_RHIC}${profile}${UI_NORMAL}"; \
     just _settings $profile
 
 _check_font:
-    @[ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ] || (\
-    echo " ⚡ \e[31;1mFont \e[0;34;4m{{ font }}\e[0;31;1m is not installed!\e[0m ⚡"; \
-    echo "    \e[33;1mUse \e[0;36;3mgetnf\e[0;33;1m to install it.\e[0m"; \
-    ~/.local/bin/getnf -i "{{ getnf_font }}"; \
-    )
+    @echo -n "${UI_SSYM}Install font ${UI_SHIC}{{ font }}${UI_NORMAL}"
+    @if [ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ]; then echo $UI_SKIPPED; else echo ""; \
+    ~/.local/bin/getnf -i "{{ getnf_font }}" | paste /dev/null -; \
+    fi
 
 _settings PROFILE: _check_font
-    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36muse-system-font\e[0m → \e[0;36m{{ use_system_font }}\e[0m"
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}use-system-font${UI_NORMAL} → ${UI_SHIC}{{ use_system_font }}${UI_NORMAL}"
     @{{ gsettings }} set {{ gs_base_schema }} use-system-font {{ use_system_font }}
-    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mfont-name\e[0m → \e[0;36m\"{{ font }} {{ fontsize }}\"\e[0m"
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}font-name${UI_NORMAL} → ${UI_SHIC}\"{{ font }} {{ fontsize }}\"${UI_NORMAL}"
     @{{ gsettings }} set {{ gs_base_schema }} font-name "{{ font }} {{ fontsize }}"
-    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mdefault-columns\e[0m → \e[0;36m{{ default_columns }}\e[0m"
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}default-columns${UI_NORMAL} → ${UI_SHIC}{{ default_columns }}${UI_NORMAL}"
     @{{ gsettings }} set {{ gs_base_schema }} default-columns {{ default_columns }}
-    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mdefault-rows\e[0m → \e[0;36m{{ default_rows }}\e[0m"
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}default-rows${UI_NORMAL} → ${UI_SHIC}{{ default_rows }}${UI_NORMAL}"
     @{{ gsettings }} set {{ gs_base_schema }} default-rows {{ default_rows }}
-    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mrestore-session\e[0m → \e[0;36m{{ restore_session }}\e[0m"
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}restore-session${UI_NORMAL} → ${UI_SHIC}{{ restore_session }}${UI_NORMAL}"
     @{{ gsettings }} set {{ gs_base_schema }} restore-session {{ restore_session }}
-    @echo "    \e[33;1m• \e[34;1mSet globaly: \e[0;36mrestore-window-size\e[0m → \e[0;36m{{ restore_window_size }}\e[0m"
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}restore-window-size${UI_NORMAL} → ${UI_SHIC}{{ restore_window_size }}${UI_NORMAL}"
     @{{ gsettings }} set {{ gs_base_schema }} restore-window-size {{ restore_window_size }}
-    @echo "    \e[33;1m• \e[34;1mSet for defaulp profil: \e[0;36mpalette\e[0m → \e[0;36m\"{{ palette }}\"\e[0m"
+    @echo "${UI_SSYM}Set for defaulp profil: ${UI_SHIC}palette${UI_NORMAL} → ${UI_SHIC}\"{{ palette }}\"${UI_NORMAL}"
     @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} palette "{{ palette }}"
-    @echo "    \e[33;1m• \e[34;1mSet for defaulp profil: \e[0;36mopacity\e[0m → \e[0;36m{{ opacity }}\e[0m"
+    @echo "${UI_SSYM}Set for defaulp profil: ${UI_SHIC}opacity${UI_NORMAL} → ${UI_SHIC}{{ opacity }}${UI_NORMAL}"
     @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} opacity {{ opacity }}
 
 _install_requirements METHOD:
     @[ {{ METHOD }} = "apt" ] || [ {{ METHOD }} = "flatpak" ] || (\
-    echo " ⚡ \e[31;1mArgument \e[0;36;4mMETHOD / install_method\e[0;31;1m must be \e[0;36mapt\e[0;31;1m or \e[0;36mflatpak\e[0m ⚡";\
+    echo "${UI_SERS}Argument ${UI_SHIC}METHOD / install_method${UI_SWAC} must be ${UI_SHIC}apt${UI_SWAC} or ${UI_SHIC}flatpak${UI_SERE}";\
     exit 1; )
     @just _{{ METHOD }}_install_requirements
 
 _apt_install_requirements:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mapt\e[34;1m packages\e[0m"
-    @dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1 \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}apt${UI_SCOL} packages${UI_NORMAL}"
+    @if dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
     if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
-    echo "      • \e[35mUpdate apt cache\e[0m"; \
+    echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
     sudo apt-get update >/dev/null; \
     fi; \
-    echo "      • \e[35mInstall: \e[1;35m{{ apt_pkgs }}\e[0m"; \
+    echo "${UI_PSYM}Install: ${UI_PHIC}{{ apt_pkgs }}${UI_NORMAL}"; \
     sudo apt-get install {{ apt_pkgs }} -y >/dev/null; \
-    )
+    fi
 
 _flatpak_apt_install:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mflatpak\e[34;1m apt package\e[0m"
-    @dpkg-query -s flatpak >/dev/null 2>&1 \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}flatpak${UI_SCOL}apt package${UI_NORMAL}"
+    @if dpkg-query -s flatpak >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
     if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
-    echo "      • \e[35mUpdate apt cache\e[0m"; \
+    echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
     sudo apt-get update >/dev/null; \
     fi; \
-    echo "      • \e[35mInstall: \e[1;35mflatpak\e[0m"; \
+    echo "${UI_PSYM}Install: ${UI_PHIC}flatpak${UI_NORMAL}"; \
     sudo apt-get install flatpak -y >/dev/null; \
-    echo "      • \e[35mConfigure remote: \e[1;35mflathub.org\e[0m"; \
+    echo "${UI_PSYM}Configure remote: ${UI_PHIC}flathub.org${UI_NORMAL}"; \
     flatpak remote-add --if-not-exists flathub https://flathub.org ; \
-    )
+    fi
 
 _flatpak_install_requirements: _flatpak_apt_install
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36m{{ flatpak_pkgs }}\e[34;1m\e[0m"
-    @flatpak info {{ flatpak_pkgs }} -r >/dev/null 2>&1 \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}{{ flatpak_pkgs }}${UI_NORMAL}"
+    @if flatpak info {{ flatpak_pkgs }} -r >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
     flatpak install --noninteractive flathub {{ flatpak_pkgs }} >/dev/null 2>&1; \
     if [ ! -f {{ ptyxis_wrapper }} ]; then \
-    echo "      • \e[35mInstall wrapper script: \e[1;35m{{ ptyxis_wrapper }}\e[0m"; \
-    echo '#!/bin/sh' | sudo tee {{ ptyxis_wrapper }} > /dev/null; \
+    echo "${UI_PSYM}Install wrapper script: ${UI_PHIC}{{ ptyxis_wrapper }}${UI_NORMAL}"; \
+    echo "#!/bin/sh" | sudo tee {{ ptyxis_wrapper }} > /dev/null; \
     echo "flatpak run app.devsuite.Ptyxis --new-window" | sudo tee -a {{ ptyxis_wrapper }} > /dev/null; \
     sudo chmod a+x {{ ptyxis_wrapper }}; \
-    echo "      • \e[35mRegister wrapper for \e[1;35mupdate-alternatives\e[0m"; \
+    echo "${UI_PSYM}Register wrapper for ${UI_PHIC}update-alternatives${UI_NORMAL}"; \
     sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator {{ ptyxis_wrapper }} 10; \
     fi; \
-    echo "    \e[31;1m╰─❯ \e[33;1mTo set default teminal run:"; \
-    echo "        \e[0;36;3msudo update-alternatives --config x-terminal-emulator\e[0m"; \
-    )
+    echo "${UI_ASYM}To set default teminal run:"; \
+    echo "${UI_AIND}${UI_AHIC}sudo update-alternatives --config x-terminal-emulator${UI_NORMAL}"; \
+    fi

@@ -1,10 +1,13 @@
-apt_pkgs := "curl direnv eza fd-find git ripgrep stow wget zsh"
+set dotenv-filename := ".env"
+set dotenv-load
+
+apt_pkgs := "curl direnv eza fd-find git ripgrep stow vim wget zsh"
 # run apt update if the cache is older the ... minutes
 apt_cache_refresh_age := "60"
 
 bat_version := "0.26.1"
-bat_deb := 'bat_' + bat_version + '_amd64.deb'
-bat_download := 'https://github.com/sharkdp/bat/releases/download/v' + bat_version + '/' + bat_deb
+bat_deb := "bat_" + bat_version + "_amd64.deb"
+bat_download := "https://github.com/sharkdp/bat/releases/download/v" + bat_version + "/" + bat_deb
 getnf_font := "Meslo"
 font := "MesloLGS Nerd Font"
 zshenv := "/etc/zsh/zshenv"
@@ -17,34 +20,26 @@ _default:
     @just --list --unsorted
 
 _done:
-    @echo
-    @echo "    ✨✨  \e[32;1mFinished\e[0m  ✨✨"
-    @echo
+    @echo "${UI_FINISHED}"
 
 # Install general dependencies
 bootstrap: && _install_apt_pkgs _set_xdg_config_home _set_zsh _install_bat_download _install_zoxide _install_fzf _install_getnf _install_starship _install_oh_my_zsh _done
-    @echo "🎁  \e[34;1mInstall general dependencies for \e[0;36m{{ file_stem(justfile_directory()) }}\e[0m"
+    @echo "${UI_RSYM}Install general dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
 
 _install_apt_pkgs:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mapt\e[34;1m packages\e[0m"
-    @dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1 \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}apt${UI_SCOL} packages${UI_NORMAL}"
+    @if dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
     if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
-    echo "      • \e[35mUpdate apt cache\e[0m"; \
+    echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
     sudo apt-get update >/dev/null; \
     fi; \
-    echo "      • \e[35mInstall: \e[1;35m{{ apt_pkgs }}\e[0m"; \
+    echo "${UI_PSYM}Install: ${UI_PHIC}{{ apt_pkgs }}${UI_NORMAL}"; \
     sudo apt-get install {{ apt_pkgs }} -y >/dev/null; \
-    )
+    fi
 
 _set_xdg_config_home:
-    @echo -n "    \e[33;1m• \e[34mSet \e[0;36mXDG_CONFIG_HOME\e[34;1m globally\e[0m"
-    @/usr/bin/grep -q ZDOTDIR {{ zshenv }} 2>/dev/null \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || ( \
-    echo ''; \
+    @echo -n "${UI_SSYM}Set ${UI_SHIC}XDG_CONFIG_HOME${UI_SCOL} globally${UI_NORMAL}"
+    @if /usr/bin/grep -q ZDOTDIR {{ zshenv }} 2>/dev/null; then echo $UI_SKIPPED; else echo ""; \
     (\
     echo ''; \
     echo 'if [[ -z "$XDG_CONFIG_HOME" ]]'; \
@@ -57,107 +52,86 @@ _set_xdg_config_home:
     echo '    export ZDOTDIR="$XDG_CONFIG_HOME/zsh"'; \
     echo 'fi'; \
     ) | sudo tee -a {{ zshenv }} > /dev/null; \
-    )
+    fi
 
 _set_zsh:
-    @echo -n "    \e[33;1m• \e[34mSet \e[0;36mzsh\e[34;1m as default shell\e[0m"
-    @[ $(getent passwd $USER | cut -d':' -f7) = "/usr/bin/zsh" ] \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
+    @echo -n "${UI_SSYM}Set ${UI_SHIC}zsh${UI_SCOL} as default shell${UI_NORMAL}"
+    @if [ $(getent passwd $USER | cut -d':' -f7) = "/usr/bin/zsh" ]; then echo $UI_SKIPPED; else echo ""; \
     chsh -s /usr/bin/zsh; \
-    )
+    fi
 
 _install_bat_download:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mbat\e[34;1m v{{ bat_version }}\e[0m"
-    @if command -v bat 2>&1 >/dev/null; then (\
-    echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    )\
-    else (\
-    echo ''; \
-    cd /tmp; \
-    curl -LO {{ bat_download }}; \
-    sudo apt-get install /tmp/{{ bat_deb }} -y; \
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}bat${UI_SCOL} v{{ bat_version }}${UI_NORMAL}"
+    @if command -v bat 2>&1 >/dev/null; then echo $UI_SKIPPED; else echo ""; \
+    ( cd /tmp; \
+    echo "${UI_PSYM}Download ${UI_PHIC}{{ bat_deb }}${UI_NORMAL}"; \
+    curl -LO {{ bat_download }} >/dev/null 2>&1; \
+    echo "${UI_PSYM}Install ${UI_PHIC}{{ bat_deb }}${UI_NORMAL}"; \
+    sudo apt-get install /tmp/{{ bat_deb }} -y >/dev/null 2>&1; \
     rm /tmp/{{ bat_deb }} -f; \
     ) fi
 
 _install_zoxide:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mzoxide\e[0m"
-    @[ -f ~/.local/bin/zoxide ] \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
-    curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh ; \
-    )
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}zoxide${UI_NORMAL}"
+    @if [ -f ~/.local/bin/zoxide ]; then echo $UI_SKIPPED; else echo ""; \
+    echo "${UI_PSYM}Download and install ${UI_PHIC}zoxide${UI_NORMAL}"; \
+    curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh >/dev/null ; \
+    fi
 
 _install_fzf:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mfzf\e[0m"
-    @[ -f ~/.fzf/install ] \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; \
-    ~/.fzf/install --no-zsh; \
-    )
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}fzf${UI_NORMAL}"
+    @if [ -f ~/.fzf/install ]; then echo $UI_SKIPPED; else echo ""; \
+    echo "${UI_PSYM}Git clone ${UI_PHIC}fzf${UI_PCOL} repo${UI_NORMAL}"; \
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf >/dev/null 2>&1; \
+    echo "${UI_PSYM}Install ${UI_PHIC}fzf${UI_NORMAL}"; \
+    ~/.fzf/install --no-zsh --no-bash --no-update-rc --completion --key-bindings >/dev/null 2>&1; \
+    fi
 
 _install_getnf: && _install_font
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mgetnf\e[0m"
-    @[ -f ~/.local/bin/getnf ] \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
-    curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash; \
-    )
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}getnf${UI_NORMAL}"
+    @if [ -f ~/.local/bin/getnf ]; then echo $UI_SKIPPED; else echo ""; \
+    curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash >/dev/null 2>&1; \
+    fi
 
 _install_font:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36m{{ getnf_font }}\e[34;1m font\e[0m"
-    @[ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ] \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
-    ~/.local/bin/getnf -i "{{ getnf_font }}"; \
-    )
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}{{ getnf_font }}${UI_SCOL} font${UI_NORMAL}"
+    @if [ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ]; then echo $UI_SKIPPED; else echo ""; \
+    ~/.local/bin/getnf -i "{{ getnf_font }}" | paste /dev/null -; \
+    fi
 
 _install_starship:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36mstarship\e[0m"
-    @if  command -v starship 2>&1 >/dev/null; then (\
-    echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    )\
-    else (\
-    echo ''; \
-    curl -sS https://starship.rs/install.sh | sh ; \
-    ) fi
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}starship${UI_NORMAL}"
+    @if  command -v starship 2>&1 >/dev/null; then echo $UI_SKIPPED; else echo ""; \
+    curl -sS https://starship.rs/install.sh | sh -s -- -y >/dev/null; \
+    fi
 
 _install_oh_my_zsh:
-    @echo -n "    \e[33;1m• \e[34mInstall \e[0;36moh-my-zsh\e[0m"
-    @[ -f ~/.oh-my-zsh/oh-my-zsh.sh ] \
-    && echo ' \e[34;1m[\e[31;1mskipped\e[34;1m]\e[0m' \
-    || (\
-    echo ''; \
-    ZSH=$HOME/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh --unattended --keep-zshrc)"; \
-    )
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}oh-my-zsh${UI_NORMAL}"
+    @if [ -f ~/.oh-my-zsh/oh-my-zsh.sh ]; then echo $UI_SKIPPED; else echo ""; \
+    ZSH=$HOME/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended --keep-zshrc" >/dev/null 2>&1; \
+    fi
 
 # Stow packages   (see: `just help-stow` for details)
 stow +pkgs="basics": && (_stow_action "S" "true" pkgs)
-    @echo "🎁  \e[34;1mStow packages \e[0;36m{{ pkgs }}\e[0m"
+    @echo "${UI_RSYM}Stow packages ${UI_RHIC}{{ pkgs }}${UI_NORMAL}"
 
 # Restow packages (see: `just help-stow` for details)
 restow +pkgs="basics": && (_stow_action "R" "false" pkgs)
-    @echo "🎁  \e[34;1mRestow packages \e[0;36m{{ pkgs }}\e[0m"
+    @echo "${UI_RSYM}Restow packages ${UI_RHIC}{{ pkgs }}${UI_NORMAL}"
 
 # Unstow packages (see: `just help-stow` for details)
 unstow +pkgs="basics": && (_stow_action "D" "false" pkgs)
-    @echo "🎁  \e[34;1mUnstow packages \e[0;36m{{ pkgs }}\e[0m"
+    @echo "${UI_RSYM}Unstow packages ${UI_RHIC}{{ pkgs }}${UI_NORMAL}"
 
 # Help for the stow|restow|unstow recipe
 help-stow:
-    @echo "🎁  \e[34;1mHelp for \e[0;34mstow\e[0m|\e[34mrestow\e[0m|\e[34munstow\e[1m \e[0m[\e[36mpackages\e[0m]."
-    @echo "    \e[36mpackages\e[0m can be:"
-    @echo "         \e[35;1mbasics\e[0m for \e[95m{{ stow_basics }}\e[0m,"
-    @echo "         \e[35;1messentials\e[0m for \e[95m{{ stow_essentials }}\e[0m,"
-    @echo "         \e[35;1mterminals\e[0m for \e[95m{{ stow_terminal }}\e[0m,"
-    @echo "         \e[35;1mall\e[0m is short for \e[35;1mbasics essentials terminals\e[0m"
-    @echo "         or just one or more of the \e[95mentries\e[0m above."
+    @echo "${UI_RSYM}Help for ${UI_SCOL}stow${UI_SEP}restow${UI_SEP}unstow${UI_NORMAL} [${UI_SHIC}packages${UI_NORMAL}]."
+    @echo "    ${UI_SHIC}packages${UI_NORMAL} can be:"
+    @echo "         ${UI_PHIC}basics${UI_NORMAL} for ${UI_PWAC}{{ stow_basics }}${UI_NORMAL},"
+    @echo "         ${UI_PHIC}essentials${UI_NORMAL} for ${UI_PWAC}{{ stow_essentials }}${UI_NORMAL},"
+    @echo "         ${UI_PHIC}terminals${UI_NORMAL} for ${UI_PWAC}{{ stow_terminal }}${UI_NORMAL},"
+    @echo "         ${UI_PHIC}all${UI_NORMAL} is short for ${UI_PHIC}basics essentials terminals${UI_NORMAL}"
+    @echo "         or just one or more of the ${UI_PWAC}entries${UI_NORMAL} above."
 
 _stow_action action show_justfile +pkgs: && _done
     #!/bin/bash
@@ -186,7 +160,7 @@ _stow_action action show_justfile +pkgs: && _done
                 pkg_dirs+=(essentials_$pkg) ;;
             alacritty|ptyxis)
                 pkg_dirs+=(terminal_$pkg) ;;
-            *) echo -e "    ⚡ \e[31;3m$pkg\e[31;1m is an unknown package for stow\e[0m ⚡">&2 
+            *) echo -e "${UI_SERS}$pkg${UI_SEMC} is an unknown package for stow${UI_SERE}">&2 
                 exit 1
                 ;;
         esac
@@ -207,20 +181,19 @@ _stow_action action show_justfile +pkgs: && _done
     for pkg in "${dedup_pkg_dirs[@]}"
     do 
         case {{ action }} in 
-            S) echo -e "    \e[33;1m• \e[34;1mstow $pkg\e[0m"
+            S) echo -e "${UI_SSYM}stow $pkg${UI_NORMAL}"
                 stow $pkg
                 ;;
-            R) echo -e "    \e[33;1m• \e[34;1mstow -R $pkg\e[0m"
+            R) echo -e "${UI_SSYM}stow -R $pkg${UI_NORMAL}"
                 stow -R $pkg
                 ;;
-            D) echo -e "    \e[33;1m• \e[34;1mstow -D $pkg\e[0m"
+            D) echo -e "${UI_SSYM}stow -D $pkg${UI_NORMAL}"
                 stow -D $pkg
                 ;;
-            *) echo -e "  ⚡ \e[31;3m{{ action }}\e[31;1m is a unknown stow action\e[0m ⚡">&2 
+            *) echo -e "${UI_SERS}{{ action }}${UI_SEMC} is a unknown stow action${UI_SERE}">&2 
                exit 1;;
         esac
         if [[ "{{ show_justfile }}" == "true" ]] && [[ -f "${pkg}/justfile" ]]; then
-            echo -e "      \e[31;1m╰─❯ \e[0;33;1mPost stow actions: \e[0;36;3mjust ${pkg}/\e[0m"; \
+            echo -e "${UI_ASYM}Post stow actions: ${UI_AHIC}just ${pkg}/${UI_NORMAL}"; \
         fi 
     done
-
