@@ -16,6 +16,8 @@ return {
         'eslint_d', -- ts/js linter
         'shfmt', -- Shell formatter
         'checkmake', -- linter for Makefiles
+        'clang-format', -- C, C++ formater
+        'markdownlint', -- markdown linter
         -- 'stylua', -- lua formatter; Already installed via Mason
         -- 'ruff', -- Python linter and formatter; Already installed via Mason
       },
@@ -24,10 +26,13 @@ return {
 
     local sources = {
       diagnostics.checkmake,
-      formatting.prettier.with { filetypes = { 'html', 'json', 'yaml', 'markdown' } },
+      formatting.prettier.with { filetypes = { 'html', 'json', 'yaml' } },
       formatting.stylua,
       formatting.shfmt.with { args = { '-i', '4' } },
       formatting.terraform_fmt,
+      formatting.clang_format.with { filetypes = { 'c', 'cpp', 'h', 'hpp' } },
+      formatting.markdownlint,
+      diagnostics.markdownlint,
       require('none-ls.formatting.ruff').with { extra_args = { '--extend-select', 'I' } },
       require 'none-ls.formatting.ruff_format',
     }

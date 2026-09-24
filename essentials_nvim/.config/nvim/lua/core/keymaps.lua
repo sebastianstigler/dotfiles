@@ -15,6 +15,10 @@ vim.keymap.set('i', '<C-s>', '<Esc><cmd> w <CR>', opts)
 -- save file without auto-formatting
 vim.keymap.set('n', '<leader>sn', '<cmd>noautocmd w <CR>', opts)
 
+-- format file
+-- <C-i> won't work as the keycombo is mapped to <Tab> in the terminal
+vim.keymap.set('n', '<C-f>', vim.lsp.buf.format, { desc = 'Format buffer' })
+
 -- quit file
 vim.keymap.set('n', '<C-q>', '<cmd> q <CR>', opts)
 
