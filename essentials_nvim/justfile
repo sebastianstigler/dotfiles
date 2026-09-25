@@ -1,0 +1,58 @@
+set dotenv-filename := '../.env'
+set dotenv-load
+
+neovim_version := "v0.11.7"
+neovim_install_dir := "/opt/neovim" / neovim_version
+neovim_appimage := "nvim-linux-x86_64.appimage"
+neovim_bin_name := "/usr/local/bin/nvim"
+
+apt_pkgs := "luarocks"
+nvm_version := "v0.40.7"
+
+# run apt update if the cache is older the ... minutes
+apt_cache_refresh_age := "60"
+
+_default:
+    @just --list --unsorted 
+
+_done:
+    @echo "${UI_FINISHED}"
+
+# Install neovim dependencies
+bootstrap: && _install_neovim _install_apt_pkgs _install_nvm_nodejs _done
+    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
+
+_install_neovim:
+    @echo -n "${UI_SSYM}Install neovim${UI_NORMAL}"
+    @if [ -f "{{ neovim_install_dir }}/{{ neovim_appimage }}" ] && [ -f "{{ neovim_bin_name }}" ]; then echo $UI_SKIPPED; else echo ""; \
+    ( cd /tmp/; \
+    curl -LO https://github.com/neovim/neovim/releases/download/{{ neovim_version }}/{{ neovim_appimage }} >/dev/null 2>&1; \
+    chmod +x "/tmp/{{ neovim_appimage }}"; \
+    sudo mkdir -p "{{ neovim_install_dir }}"; \
+    sudo cp "/tmp/{{ neovim_appimage }}" "{{ neovim_install_dir }}"; \
+    sudo chown root:root "{{ neovim_install_dir }}/{{ neovim_appimage }}"; \
+    sudo ln -sf "{{ neovim_install_dir }}/{{ neovim_appimage }}" "{{ neovim_bin_name }}"; \
+    ) fi
+
+_install_apt_pkgs:
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}apt${UI_SCOL} packages${UI_NORMAL}"
+    @if dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
+    if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
+    echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
+    sudo apt-get update >/dev/null; \
+    fi; \
+    echo "${UI_PSYM}Install: ${UI_PHIC}{{ apt_pkgs }}${UI_NORMAL}"; \
+    sudo apt-get install {{ apt_pkgs }} -y >/dev/null; \
+    fi
+
+_install_nvm_nodejs:
+    #!/usr/bin/zsh
+    echo -n "${UI_SSYM}Install ${UI_SHIC}nvm${UI_SCOL} and ${UI_SHIC}nodejs${UI_NORMAL}"
+    if [ -s "$NVM_DIR/nvm.sh" ]; then echo $UI_SKIPPED; else echo ""
+    export NVM_DIR="$HOME/.config/nvm" 
+    echo "${UI_PSYM}Install: ${UI_PHIC}nvm${UI_NORMAL}"
+    PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_version }}/install.sh | bash' >/dev/null 2>&1
+    source "$NVM_DIR/nvm.sh"
+    echo "${UI_PSYM}Install: ${UI_PHIC}nodejs${UI_NORMAL}"
+    nvm install --lts >/dev/null 2>&1
+    fi
