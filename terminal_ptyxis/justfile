@@ -59,38 +59,14 @@ _done:
     @echo "${UI_FINISHED}"
 
 # Install ptyxis dependencies
-bootstrap: && (_install_requirements install_method) _done
+bootstrap: && (_install_requirements install_method) _install_font _hint_set_default_terminal _done
     @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_RCOL} with install method ${UI_RHIC}{{ install_method }}${UI_NORMAL}"
 
-# Set my prefered settings
-settings: && _done
-    @profile=$({{ gsettings }} get {{ gs_base_schema }} default-profile-uuid 2>/dev/null | sed "s/'//g"); \
-    echo "${UI_RSYM}Settings for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_RCOL} for profile ${UI_RHIC}${profile}${UI_NORMAL}"; \
-    just _settings $profile
-
-_check_font:
+_install_font:
     @echo -n "${UI_SSYM}Install font ${UI_SHIC}{{ font }}${UI_NORMAL}"
     @if [ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ]; then echo $UI_SKIPPED; else echo ""; \
     ~/.local/bin/getnf -i "{{ getnf_font }}" | paste /dev/null -; \
     fi
-
-_settings PROFILE: _check_font
-    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}use-system-font${UI_NORMAL} → ${UI_SHIC}{{ use_system_font }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} use-system-font {{ use_system_font }}
-    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}font-name${UI_NORMAL} → ${UI_SHIC}\"{{ font }} {{ fontsize }}\"${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} font-name "{{ font }} {{ fontsize }}"
-    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}default-columns${UI_NORMAL} → ${UI_SHIC}{{ default_columns }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} default-columns {{ default_columns }}
-    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}default-rows${UI_NORMAL} → ${UI_SHIC}{{ default_rows }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} default-rows {{ default_rows }}
-    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}restore-session${UI_NORMAL} → ${UI_SHIC}{{ restore_session }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} restore-session {{ restore_session }}
-    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}restore-window-size${UI_NORMAL} → ${UI_SHIC}{{ restore_window_size }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} restore-window-size {{ restore_window_size }}
-    @echo "${UI_SSYM}Set for defaulp profil: ${UI_SHIC}palette${UI_NORMAL} → ${UI_SHIC}\"{{ palette }}\"${UI_NORMAL}"
-    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} palette "{{ palette }}"
-    @echo "${UI_SSYM}Set for defaulp profil: ${UI_SHIC}opacity${UI_NORMAL} → ${UI_SHIC}{{ opacity }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} opacity {{ opacity }}
 
 _install_requirements METHOD:
     @[ {{ METHOD }} = "apt" ] || [ {{ METHOD }} = "flatpak" ] || (\
@@ -134,6 +110,33 @@ _flatpak_install_requirements: _flatpak_apt_install
     echo "${UI_PSYM}Register wrapper for ${UI_PHIC}update-alternatives${UI_NORMAL}"; \
     sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator {{ ptyxis_wrapper }} 10; \
     fi; \
-    echo "${UI_ASYM}To set default teminal run:"; \
-    echo "${UI_AIND}${UI_AHIC}sudo update-alternatives --config x-terminal-emulator${UI_NORMAL}"; \
     fi
+
+_hint_set_default_terminal:
+    @echo "${UI_SSYM}Set default terminal"
+    @echo "${UI_ASYM}To set ptyxis as your default teminal run:"
+    @echo "${UI_AIND}${UI_AHIC}sudo update-alternatives --config x-terminal-emulator${UI_NORMAL}"
+
+# Set my prefered settings
+settings: && _done
+    @profile=$({{ gsettings }} get {{ gs_base_schema }} default-profile-uuid 2>/dev/null | sed "s/'//g"); \
+    echo "${UI_RSYM}Settings for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_RCOL} for profile ${UI_RHIC}${profile}${UI_NORMAL}"; \
+    just _settings $profile
+
+_settings PROFILE: _install_font
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}use-system-font${UI_NORMAL} → ${UI_SHIC}{{ use_system_font }}${UI_NORMAL}"
+    @{{ gsettings }} set {{ gs_base_schema }} use-system-font {{ use_system_font }}
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}font-name${UI_NORMAL} → ${UI_SHIC}\"{{ font }} {{ fontsize }}\"${UI_NORMAL}"
+    @{{ gsettings }} set {{ gs_base_schema }} font-name "{{ font }} {{ fontsize }}"
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}default-columns${UI_NORMAL} → ${UI_SHIC}{{ default_columns }}${UI_NORMAL}"
+    @{{ gsettings }} set {{ gs_base_schema }} default-columns {{ default_columns }}
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}default-rows${UI_NORMAL} → ${UI_SHIC}{{ default_rows }}${UI_NORMAL}"
+    @{{ gsettings }} set {{ gs_base_schema }} default-rows {{ default_rows }}
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}restore-session${UI_NORMAL} → ${UI_SHIC}{{ restore_session }}${UI_NORMAL}"
+    @{{ gsettings }} set {{ gs_base_schema }} restore-session {{ restore_session }}
+    @echo "${UI_SSYM}Set globaly: ${UI_SHIC}restore-window-size${UI_NORMAL} → ${UI_SHIC}{{ restore_window_size }}${UI_NORMAL}"
+    @{{ gsettings }} set {{ gs_base_schema }} restore-window-size {{ restore_window_size }}
+    @echo "${UI_SSYM}Set for defaulp profil: ${UI_SHIC}palette${UI_NORMAL} → ${UI_SHIC}\"{{ palette }}\"${UI_NORMAL}"
+    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} palette "{{ palette }}"
+    @echo "${UI_SSYM}Set for defaulp profil: ${UI_SHIC}opacity${UI_NORMAL} → ${UI_SHIC}{{ opacity }}${UI_NORMAL}"
+    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} opacity {{ opacity }}
