@@ -95,7 +95,7 @@ _flatpak_apt_install:
     echo "${UI_PSYM}Install: ${UI_PHIC}flatpak${UI_NORMAL}"; \
     sudo apt-get install flatpak -y >/dev/null; \
     echo "${UI_PSYM}Configure remote: ${UI_PHIC}flathub.org${UI_NORMAL}"; \
-    flatpak remote-add --if-not-exists flathub https://flathub.org ; \
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; \
     fi
 
 _flatpak_install_requirements: _flatpak_apt_install
