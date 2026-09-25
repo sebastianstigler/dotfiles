@@ -6,9 +6,12 @@ Powerful but tastefully minimal zsh configuration.
 
 ### Ubuntu
 
+sudo apt update
+sudo apt install just
+
 ```sh
 # install bat from source
-wget https://github.com/sharkdp/bat/releases/download/v0.26.1/bat_0.26.1_amd64.deb
+curl -LO https://github.com/sharkdp/bat/releases/download/v0.26.1/bat_0.26.1_amd64.deb
 sudo dpkg -i bat_0.26.1_amd64.deb
 # or from repository (ubuntu 24.04 version has problems when bat is used as MANPAGER)
 sudo apt install bat
@@ -16,7 +19,7 @@ sudo apt install bat
 # install remainding
 sudo apt install zsh eza fd-find ripgrep just tmux tmuxp stow curl git direnv clangd luarocks
 
-# install neovim from appimage 0.11.7
+# install neovim from appimage 0.11.7; apt: clangd, luarocks
 mkdir -p ~/.local/{neovim.app,bin} && cd ~/.local/neovim.app
 curl -LO https://github.com/neovim/neovim/releases/download/v0.11.7/nvim-linux-x86_64.appimage
 chmod +x nvim-linux-x86_64.appimage
