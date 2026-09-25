@@ -1,0 +1,42 @@
+set dotenv-filename := '../.env'
+set dotenv-load
+
+apt_pkgs := "alacritty"
+
+getnf_font := "Meslo"
+font := "MesloLGS Nerd Font"
+
+# run apt update if the cache is older the ... minutes
+apt_cache_refresh_age := "60"
+
+_default:
+    @just --list --unsorted 
+
+_done:
+    @echo "${UI_FINISHED}"
+
+# Install alacritty dependencies
+bootstrap: && _install_apt_pkgs _install_font _hint_set_default_terminal _done
+    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
+
+_install_apt_pkgs:
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}apt${UI_SCOL} packages${UI_NORMAL}"
+    @if dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
+    if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
+    echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
+    sudo apt-get update >/dev/null; \
+    fi; \
+    echo "${UI_PSYM}Install: ${UI_PHIC}{{ apt_pkgs }}${UI_NORMAL}"; \
+    sudo apt-get install {{ apt_pkgs }} -y >/dev/null; \
+    fi
+
+_install_font:
+    @echo -n "${UI_SSYM}Install font ${UI_SHIC}{{ font }}${UI_NORMAL}"
+    @if [ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ]; then echo $UI_SKIPPED; else echo ""; \
+    ~/.local/bin/getnf -i "{{ getnf_font }}" | paste /dev/null -; \
+    fi
+
+_hint_set_default_terminal:
+    @echo "${UI_SSYM}Set default terminal"
+    @echo "${UI_ASYM}To set ptyxis as your default teminal run:"
+    @echo "${UI_AIND}${UI_AHIC}sudo update-alternatives --config x-terminal-emulator${UI_NORMAL}"
