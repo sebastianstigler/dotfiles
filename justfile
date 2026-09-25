@@ -19,11 +19,14 @@ stow_terminal := "alacritty ptyxis"
 _default:
     @just --list --unsorted
 
+_post_action:
+    @echo "\n    ${UI_ACOL}Logoff and Login to load new environment variables!${UI_NORMAL}"
+
 _done:
     @echo "${UI_FINISHED}"
 
 # Install general dependencies
-bootstrap: && _install_apt_pkgs _set_xdg_config_home _set_zsh _install_bat_download _install_zoxide _install_fzf _install_getnf _install_starship _install_oh_my_zsh _done
+bootstrap: && _install_apt_pkgs _set_xdg_config_home _set_zsh _install_bat_download _install_zoxide _install_fzf _install_getnf _install_starship _install_oh_my_zsh _post_action _done
     @echo "${UI_RSYM}Install general dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
 
 _install_apt_pkgs:
