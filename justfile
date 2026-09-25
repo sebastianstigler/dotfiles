@@ -3,7 +3,8 @@ set dotenv-load
 
 apt_pkgs := "curl direnv eza fd-find git ripgrep stow vim wget zsh"
 # run apt update if the cache is older the ... minutes
-apt_cache_refresh_age := "60"
+apt_cache_refresh_age := "1"
+#apt_cache_refresh_age := "60"
 
 bat_version := "0.26.1"
 bat_deb := "bat_" + bat_version + "_amd64.deb"
@@ -35,6 +36,10 @@ _install_apt_pkgs:
     if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
     echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
     sudo apt-get update >/dev/null; \
+    if apt-get -s upgrade | grep -q '^Inst'; then \
+    echo "${UI_PSYM}Upgrade apt packages${UI_NORMAL}"; \
+    sudo apt-get upgrade -y >/dev/null; \
+    fi; \
     fi; \
     echo "${UI_PSYM}Install: ${UI_PHIC}{{ apt_pkgs }}${UI_NORMAL}"; \
     sudo apt-get install {{ apt_pkgs }} -y >/dev/null; \
