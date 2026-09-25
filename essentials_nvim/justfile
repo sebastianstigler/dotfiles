@@ -6,7 +6,7 @@ neovim_install_dir := "/opt/neovim" / neovim_version
 neovim_appimage := "nvim-linux-x86_64.appimage"
 neovim_bin_name := "/usr/local/bin/nvim"
 
-apt_pkgs := "cland luarocks python3-venv"
+apt_pkgs := "luarocks python3-venv"
 nvm_version := "v0.40.7"
 
 # run apt update if the cache is older the ... minutes

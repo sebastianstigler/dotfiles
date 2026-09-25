@@ -3,8 +3,7 @@ set dotenv-load
 
 apt_pkgs := "curl direnv eza fd-find git ripgrep stow vim wget zsh"
 # run apt update if the cache is older the ... minutes
-apt_cache_refresh_age := "1"
-#apt_cache_refresh_age := "60"
+apt_cache_refresh_age := "60"
 
 bat_version := "0.26.1"
 bat_deb := "bat_" + bat_version + "_amd64.deb"
