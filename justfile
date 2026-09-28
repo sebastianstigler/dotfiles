@@ -1,7 +1,7 @@
 set dotenv-filename := ".env"
 set dotenv-load
 
-apt_pkgs := "curl direnv eza fd-find git ripgrep stow vim wget zsh"
+apt_pkgs := "curl direnv eza fd-find git jq ripgrep stow vim wget zsh"
 # run apt update if the cache is older the ... minutes
 apt_cache_refresh_age := "60"
 
@@ -21,20 +21,29 @@ _default:
 
 _post_action:
     @echo "\n    ${UI_ACOL}Logoff and Login to load new environment variables!${UI_NORMAL}"
+    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq '.bootstrap=true')" > ${DOT_DOTFILES_STATE}
+    @sync "${DOT_DOTFILES_STATE}"
 
 _done:
     @echo "${UI_FINISHED}"
 
 # Install general dependencies
-bootstrap: && _install_apt_pkgs _set_xdg_config_home _set_zsh _install_bat_download _install_zoxide _install_fzf _install_getnf _install_starship _install_oh_my_zsh _post_action _done
+bootstrap: && _create_dotfiles_state _install_apt_pkgs _set_xdg_config_home _set_zsh _install_bat_download _install_zoxide _install_fzf _install_getnf _install_starship _install_oh_my_zsh _post_action _done
     @echo "${UI_RSYM}Install general dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
+
+_create_dotfiles_state:
+    @mkdir -p $(dirname "${DOT_DOTFILES_STATE}")
+    @if [ ! -f "${DOT_DOTFILES_STATE}" ]; then echo '{}'> ${DOT_DOTFILES_STATE}; fi
 
 _install_apt_pkgs:
     @echo -n "${UI_SSYM}Install ${UI_SHIC}apt${UI_SCOL} packages${UI_NORMAL}"
     @if dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
-    if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
+    if [ ! -f "${DOT_DOTFILES_STATE}" ] || [ $(( $(date +%s) - $(jq '.apt_update // 0 | tonumber' "${DOT_DOTFILES_STATE}") )) -ge ${DOT_APT_CACHE_MAX_AGE} ]; then \
     echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
-    sudo apt-get update >/dev/null; \
+    if sudo apt-get update >/dev/null; then  \
+    echo "$(cat "${DOT_DOTFILES_STATE}" | jq -S --arg ts "$(date +%s)" '.apt_update|=$ts')" > "${DOT_DOTFILES_STATE}" ; \
+    sync "${DOT_DOTFILES_STATE}" ; \
+    fi; \
     if apt-get -s upgrade | grep -q '^Inst'; then \
     echo "${UI_PSYM}Upgrade apt packages${UI_NORMAL}"; \
     sudo apt-get upgrade -y >/dev/null; \
@@ -118,8 +127,11 @@ _install_oh_my_zsh:
     ZSH=$HOME/.oh-my-zsh sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended --keep-zshrc" >/dev/null 2>&1; \
     fi
 
+_check_bootstrap:
+    @[ "$(jq '.bootstrap' "${DOT_DOTFILES_STATE}")" = "true" ] || (echo "${UI_SERS}You must first run ${UI_SHIC}just bootstrap${UI_SERE}"; exit 1)
+
 # Stow packages   (see: `just help-stow` for details)
-stow +pkgs="basics": && (_stow_action "S" "true" pkgs)
+stow +pkgs="basics":  && _check_bootstrap (_stow_action "S" "true" pkgs)
     @echo "${UI_RSYM}Stow packages ${UI_RHIC}{{ pkgs }}${UI_NORMAL}"
 
 # Restow packages (see: `just help-stow` for details)
@@ -150,7 +162,7 @@ _stow_action action show_justfile +pkgs: && _done
     pkg_dirs=()
     for pkg in $(echo {{ pkgs }} | sed 's/ /\n/g')
     do
-        case "$pkg" in 
+        case "$pkg" in
             all)
                 pkg_dirs+=(${_STOW_BASICS[@]})
                 pkg_dirs+=(${_STOW_ESSENTIALS[@]})
@@ -167,7 +179,7 @@ _stow_action action show_justfile +pkgs: && _done
                 pkg_dirs+=(essentials_$pkg) ;;
             alacritty|ptyxis)
                 pkg_dirs+=(terminal_$pkg) ;;
-            *) echo -e "${UI_SERS}$pkg${UI_SEMC} is an unknown package for stow${UI_SERE}">&2 
+            *) echo -e "${UI_SERS}$pkg${UI_SEMC} is an unknown package for stow${UI_SERE}">&2
                 exit 1
                 ;;
         esac
@@ -175,19 +187,19 @@ _stow_action action show_justfile +pkgs: && _done
 
     # Deduplicate package list
     dedup_pkg_dirs=()
-    declare -A seen 
+    declare -A seen
     for pkg in "${pkg_dirs[@]}"
-    do 
+    do
         if [[ ! ${seen[$pkg]+_} ]]; then
             seen[$pkg]=1
             dedup_pkg_dirs+=($pkg)
-        fi 
+        fi
     done
 
     # Run chosen action.
     for pkg in "${dedup_pkg_dirs[@]}"
-    do 
-        case {{ action }} in 
+    do
+        case {{ action }} in
             S) echo -e "${UI_SSYM}stow $pkg${UI_NORMAL}"
                 stow $pkg
                 ;;
@@ -197,10 +209,24 @@ _stow_action action show_justfile +pkgs: && _done
             D) echo -e "${UI_SSYM}stow -D $pkg${UI_NORMAL}"
                 stow -D $pkg
                 ;;
-            *) echo -e "${UI_SERS}{{ action }}${UI_SEMC} is a unknown stow action${UI_SERE}">&2 
-               exit 1;;
+            *) echo -e "${UI_SERS}{{ action }}${UI_SEMC} is a unknown stow action${UI_SERE}">&2
+                exit 1;;
         esac
-        if [[ "{{ show_justfile }}" == "true" ]] && [[ -f "${pkg}/justfile" ]]; then
-            echo -e "${UI_ASYM}Post stow actions: ${UI_AHIC}just ${pkg}/${UI_NORMAL}"; \
-        fi 
+        echo "$(cat "${DOT_DOTFILES_STATE}" \
+            | jq --arg pkgname ${pkg} --arg ac "{{ action }}" '.packages.[$pkgname].last_stow_action|=$ac' \
+            | jq --arg pkgname ${pkg} --arg ts "$(date +%s)" '.packages.[$pkgname].last_stow_action_at|=$ts' \
+            | jq -S --arg pkgname ${pkg} --arg jf "$([ -f ${pkg}/justfile ] && echo 'true' || echo 'false')" '.packages.[$pkgname].has_justfile=($jf=="true")')" \
+        > "${DOT_DOTFILES_STATE}" ;
+        sync "${DOT_DOTFILES_STATE}"
+        if [[ -f "${pkg}/justfile" ]] && [[ "{{ show_justfile }}" == "true" ]]; then
+                echo -e "${UI_ASYM}Post stow actions: ${UI_AHIC}just ${pkg}/${UI_NORMAL}"
+        fi
     done
+
+# Is there something to do
+todo:
+    @echo "${UI_PSYM}What do you need to do?${UI_NORMAL}"
+    # if not bootstrap -> just bootstrap
+    # if no packages -> just stow ...
+    # if .packages.*.has_justfile && .packages.*.bootstrap != true -> just */bootstrap
+    # else -> nothing to do
