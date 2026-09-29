@@ -64,7 +64,7 @@ vim.keymap.set('n', '<leader>tn', ':tabn<CR>', opts) --  go to next tab
 vim.keymap.set('n', '<leader>tp', ':tabp<CR>', opts) --  go to previous tab
 
 -- Toggle line wrapping
-vim.keymap.set('n', '<leader>lw', '<cmd>set wrap!<CR>', opts)
+vim.keymap.set('n', '<leader>wl', '<cmd>set wrap!<CR>', opts)
 
 -- Stay in indent mode
 vim.keymap.set('v', '<', '<gv', opts)
@@ -115,3 +115,5 @@ end, {})
 
 vim.keymap.set('n', '<F8>', '<cmd>DiffOrig<CR>', { silent = true })
 vim.keymap.set('i', '<F8>', '<Esc><cmd>DiffOrig<CR>', { silent = true })
+-- set list
+vim.keymap.set('n', '<leader>l', '<cmd>set list!<CR>', opts)
