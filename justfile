@@ -16,20 +16,20 @@ stow_basics := "zsh git vim"
 stow_essentials := "nvim tmux"
 stow_terminal := "alacritty ptyxis"
 
+current_package := file_stem(justfile_directory())
+
 _default:
     @just --list --unsorted
 
-_post_action:
+_post_action: && _mark_bootstraped
     @echo "\n    ${UI_ACOL}Logoff and Login to load new environment variables!${UI_NORMAL}"
-    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq '.bootstrap=true')" > ${DOT_DOTFILES_STATE}
-    @sync "${DOT_DOTFILES_STATE}"
 
 _done:
     @echo "${UI_FINISHED}"
 
 # Install general dependencies
 bootstrap: && _create_dotfiles_state _install_apt_pkgs _set_xdg_config_home _set_zsh _install_bat_download _install_zoxide _install_fzf _install_getnf _install_starship _install_oh_my_zsh _post_action _done
-    @echo "${UI_RSYM}Install general dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
+    @echo "${UI_RSYM}Install general dependencies for ${UI_RHIC}{{ current_package }}${UI_NORMAL}"
 
 _create_dotfiles_state:
     @mkdir -p $(dirname "${DOT_DOTFILES_STATE}")
@@ -131,7 +131,7 @@ _check_bootstrap:
     @[ "$(jq '.bootstrap' "${DOT_DOTFILES_STATE}")" = "true" ] || (echo "${UI_SERS}You must first run ${UI_SHIC}just bootstrap${UI_SERE}"; exit 1)
 
 # Stow packages   (see: `just help-stow` for details)
-stow +pkgs="basics":  && _check_bootstrap (_stow_action "S" "true" pkgs)
+stow +pkgs="basics": && _check_bootstrap (_stow_action "S" "true" pkgs)
     @echo "${UI_RSYM}Stow packages ${UI_RHIC}{{ pkgs }}${UI_NORMAL}"
 
 # Restow packages (see: `just help-stow` for details)
@@ -223,10 +223,54 @@ _stow_action action show_justfile +pkgs: && _done
         fi
     done
 
-# Is there something to do
+_mark_bootstraped:
+    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq '.bootstrap=true')" > ${DOT_DOTFILES_STATE}
+    @sync "${DOT_DOTFILES_STATE}"
+
+# Is there something to install or configure
 todo:
-    @echo "${UI_PSYM}What do you need to do?${UI_NORMAL}"
+    #!/bin/bash
+    echo -e "${UI_RSYM}Is there still something todo?${UI_NORMAL}"
+
     # if not bootstrap -> just bootstrap
+    echo -ne "${UI_SSYM}Bootstrap for ${UI_SHIC}{{ current_package }}${UI_NORMAL}"
+    if [ -f "${DOT_DOTFILES_STATE}" ] && jq -e '.bootstrap == true' "${DOT_DOTFILES_STATE}" >/dev/null; then
+        echo -e " ${UI_DONE}"
+    else
+        echo -e " ${UI_PENDING}"
+        echo -e "${UI_ASYM}Run: ${UI_AHIC}just bootstrap${UI_NORMAL}"
+        exit 0
+    fi
+
     # if no packages -> just stow ...
+    echo -ne "${UI_SSYM}Stow packages${UI_NORMAL}"
+    if jq -e '(.packages // {}) | length != 0' "${DOT_DOTFILES_STATE}" >/dev/null; then
+        echo -e " ${UI_DONE}"
+    else
+        echo -e " ${UI_PENDING}"
+        echo -e "${UI_ASYM}Run: ${UI_AHIC}just stow [...]${UI_ACOL} or ${UI_NORMAL}"
+        echo -e "               ${UI_AHIC}just help-stow${UI_ACOL} for help on the stow commands${UI_NORMAL}"
+        exit 0
+    fi
+
     # if .packages.*.has_justfile && .packages.*.bootstrap != true -> just */bootstrap
-    # else -> nothing to do
+    echo -ne "${UI_SSYM}Bootstrap packages${UI_NORMAL}"
+    packages=$(jq -r '.packages | to_entries[] | select(.value.has_justfile == true) | .key ' "${DOT_DOTFILES_STATE}")
+    if [ $(echo $packages | wc -w) = 0 ]; then
+        # all stowed packages have no justfile
+        echo -e " ${UI_DONE}"
+        exit 0
+    else
+        echo ""
+    fi
+
+    for  pkg in $packages
+    do
+        echo -ne "${UI_PSYM}Bootstrap package ${UI_PHIC}$pkg${UI_NORMAL}"
+        if jq -e --arg pkgname $pkg '.packages.[$pkgname].done == true' "${DOT_DOTFILES_STATE}" >/dev/null; then
+            echo -e " ${UI_DONE}"
+        else
+            echo -e " ${UI_PENDING}"
+            echo -e "  ${UI_ASYM}Run: ${UI_AHIC}just ${pkg}/todo${UI_NORMAL}"
+        fi
+    done

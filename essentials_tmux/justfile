@@ -3,8 +3,10 @@ set dotenv-load
 
 apt_pkgs := "tmux tmuxp"
 
-# run apt update if the cache is older the ... minutes
-apt_cache_refresh_age := "60"
+# if justfile is run in current directroy recipe_prefix=''
+# if justfile is run from parent directroy recipe_prefix='package/'
+recipe_prefix := trim_start_match(justfile_directory() + '/', invocation_directory() + '/')
+current_package := file_stem(justfile_directory())
 
 _default:
     @just --list --unsorted 
@@ -13,15 +15,25 @@ _done:
     @echo "${UI_FINISHED}"
 
 # Install tmux dependencies
-bootstrap: && _install_apt_pkgs _install_tpm _done
-    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
+bootstrap: && _check_dotfiles_bootstraped _install_apt_pkgs _install_tpm _mark_bootstraped _mark_done _done
+    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ current_package }}${UI_NORMAL}"
+
+_check_dotfiles_bootstraped:
+    @echo -n "${UI_SSYM}Dotfiles bootstraped${UI_NORMAL}"
+    @if [ -f "${DOT_DOTFILES_STATE}" ] && jq -e '.bootstrap == true' "${DOT_DOTFILES_STATE}" >/dev/null; then echo " $UI_DONE"; else echo " ${UI_PENDING}";\
+    echo "${UI_ASYM}First run: ${UI_AHIC}(cd $(dirname {{ justfile_directory() }}); just bootstrap)${UI_NORMAL}"; \
+    exit 1; \
+    fi
 
 _install_apt_pkgs:
     @echo -n "${UI_SSYM}Install ${UI_SHIC}apt${UI_SCOL} packages${UI_NORMAL}"
     @if dpkg-query -s {{ apt_pkgs }} >/dev/null 2>&1; then echo $UI_SKIPPED; else echo ""; \
-    if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -{{ apt_cache_refresh_age }} 2>/dev/null)" ]; then \
+    if [ ! -f "${DOT_DOTFILES_STATE}" ] || [ $(( $(date +%s) - $(jq '.apt_update // 0 | tonumber' "${DOT_DOTFILES_STATE}") )) -ge ${DOT_APT_CACHE_MAX_AGE} ]; then \
     echo "${UI_PSYM}Update apt cache${UI_NORMAL}"; \
-    sudo apt-get update >/dev/null; \
+    if sudo apt-get update >/dev/null; then  \
+    echo "$(cat "${DOT_DOTFILES_STATE}" | jq -S --arg ts "$(date +%s)" '.apt_update|=$ts')" > "${DOT_DOTFILES_STATE}" ; \
+    sync "${DOT_DOTFILES_STATE}" ; \
+    fi; \
     if apt-get -s upgrade | grep -q '^Inst'; then \
     echo "${UI_PSYM}Upgrade apt packages${UI_NORMAL}"; \
     sudo apt-get upgrade -y >/dev/null; \
@@ -39,4 +51,27 @@ _install_tpm:
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm >/dev/null 2>&1; \
     echo "${UI_ASYM}Open ${UI_AHIC}tmux${UI_ACOL} and use the following key-combo to install the plugins:${UI_NORMAL}"; \
     echo "${UI_AIND}${UI_AHIC}<Ctrl>+<a> <Shift>+<i>${UI_NORMAL}"; \
+    fi
+
+_mark_bootstraped:
+    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].bootstrap=true')" > "${DOT_DOTFILES_STATE}"
+    @sync "$DOT_DOTFILES_STATE"
+
+_mark_done:
+    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].done=true')" > "${DOT_DOTFILES_STATE}"
+    @sync "$DOT_DOTFILES_STATE"
+
+# Is there something to install or configure
+todo:
+    #!/bin/bash
+    echo -e "${UI_RSYM}Is there still something todo?${UI_NORMAL}"
+
+    # if not bootstrap -> just bootstrap
+    echo -ne "${UI_SSYM}Bootstrap for ${UI_SHIC}{{ current_package }}${UI_NORMAL}"
+    if [ -f "${DOT_DOTFILES_STATE}" ] && jq --arg pkgname {{ current_package }} -e '.packages.[$pkgname].bootstrap == true' "${DOT_DOTFILES_STATE}" >/dev/null; then
+        echo -e " ${UI_DONE}"
+    else
+        echo -e " ${UI_PENDING}"
+        echo -e "${UI_ASYM}Run: ${UI_AHIC}just {{ recipe_prefix }}bootstrap${UI_NORMAL}"
+        exit 0
     fi
