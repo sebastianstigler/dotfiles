@@ -1,21 +1,16 @@
 set dotenv-filename := ".env"
-set dotenv-load
+set dotenv-load := true
 
 apt_pkgs := "curl direnv eza fd-find git jq ripgrep stow vim wget zsh"
-# run apt update if the cache is older the ... minutes
-apt_cache_refresh_age := "60"
-
 bat_version := "0.26.1"
 bat_deb := "bat_" + bat_version + "_amd64.deb"
 bat_download := "https://github.com/sharkdp/bat/releases/download/v" + bat_version + "/" + bat_deb
 getnf_font := "Meslo"
 font := "MesloLGS Nerd Font"
 zshenv := "/etc/zsh/zshenv"
-
 stow_basics := "zsh git vim"
 stow_essentials := "nvim tmux"
 stow_terminal := "alacritty ptyxis"
-
 current_package := file_stem(justfile_directory())
 
 _default:
@@ -28,7 +23,7 @@ _done:
     @echo "${UI_FINISHED}"
 
 # Install general dependencies
-bootstrap: && _create_dotfiles_state _install_apt_pkgs _set_xdg_config_home _set_zsh _install_bat_download _install_zoxide _install_fzf _install_getnf _install_starship _install_oh_my_zsh _post_action _done
+bootstrap: && _create_dotfiles_state _install_apt_pkgs _set_xdg_config_home _set_zsh _create_zsh_dirs _install_bat_download _install_zoxide _install_fzf _install_getnf _install_starship _install_oh_my_zsh _post_action _done
     @echo "${UI_RSYM}Install general dependencies for ${UI_RHIC}{{ current_package }}${UI_NORMAL}"
 
 _create_dotfiles_state:
@@ -74,6 +69,13 @@ _set_zsh:
     @echo -n "${UI_SSYM}Set ${UI_SHIC}zsh${UI_SCOL} as default shell${UI_NORMAL}"
     @if [ $(getent passwd $USER | cut -d':' -f7) = "/usr/bin/zsh" ]; then echo $UI_SKIPPED; else echo ""; \
     chsh -s /usr/bin/zsh; \
+    fi
+
+_create_zsh_dirs:
+    @echo -n "${UI_SSYM}Create zsh history and cache dir${UI_NORMAL}"
+    @if [ -d "$HOME/.local/state/zsh" ] && [ -d "$HOME/.cache/zsh" ]; then echo $UI_SKIPPED; else echo ""; \
+    mkdir -p ~/.local/state/zsh; \
+    mkdir -p ~/.cache/zsh; \
     fi
 
 _install_bat_download:
