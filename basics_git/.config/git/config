@@ -3,7 +3,7 @@
 	email = sebastian.stigler@hs-aalen.de
 [core]
 	editor = nvim
-    pager = bat --style=plain
+	pager = bat --style=plain
 	autocrlf = input
 [commit]
 	template = ~/.config/git/message
