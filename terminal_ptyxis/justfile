@@ -2,8 +2,6 @@ set dotenv-filename := "../.env"
 set dotenv-load
 
 apt_pkgs := "ptyxis"
-# run apt update if the cache is older the ... minutes
-apt_cache_refresh_age := "60"
 
 #install_method := "apt"
 install_method := "flatpak"
@@ -121,7 +119,7 @@ _flatpak_apt_install:
     echo "${UI_PSYM}Install: ${UI_PHIC}flatpak${UI_NORMAL}"; \
     sudo apt-get install flatpak -y >/dev/null; \
     echo "${UI_PSYM}Configure remote: ${UI_PHIC}flathub.org${UI_NORMAL}"; \
-    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; \
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; >/dev/null 2>&1 \
     fi
 
 _flatpak_install_requirements: _flatpak_apt_install
@@ -158,21 +156,21 @@ _check_current_package_bootstraped:
 
 _settings PROFILE: _install_font
     @echo "${UI_SSYM}Set globaly: ${UI_SHIC}use-system-font${UI_NORMAL} → ${UI_SHIC}{{ use_system_font }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} use-system-font {{ use_system_font }}
+    @{{ gsettings }} set {{ gs_base_schema }} use-system-font {{ use_system_font }} >/dev/null 2>&1
     @echo "${UI_SSYM}Set globaly: ${UI_SHIC}font-name${UI_NORMAL} → ${UI_SHIC}\"{{ font }} {{ fontsize }}\"${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} font-name "{{ font }} {{ fontsize }}"
+    @{{ gsettings }} set {{ gs_base_schema }} font-name "{{ font }} {{ fontsize }}" >/dev/null 2>&1
     @echo "${UI_SSYM}Set globaly: ${UI_SHIC}default-columns${UI_NORMAL} → ${UI_SHIC}{{ default_columns }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} default-columns {{ default_columns }}
+    @{{ gsettings }} set {{ gs_base_schema }} default-columns {{ default_columns }} >/dev/null 2>&1
     @echo "${UI_SSYM}Set globaly: ${UI_SHIC}default-rows${UI_NORMAL} → ${UI_SHIC}{{ default_rows }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} default-rows {{ default_rows }}
+    @{{ gsettings }} set {{ gs_base_schema }} default-rows {{ default_rows }} >/dev/null 2>&1
     @echo "${UI_SSYM}Set globaly: ${UI_SHIC}restore-session${UI_NORMAL} → ${UI_SHIC}{{ restore_session }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} restore-session {{ restore_session }}
+    @{{ gsettings }} set {{ gs_base_schema }} restore-session {{ restore_session }} >/dev/null 2>&1
     @echo "${UI_SSYM}Set globaly: ${UI_SHIC}restore-window-size${UI_NORMAL} → ${UI_SHIC}{{ restore_window_size }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ gs_base_schema }} restore-window-size {{ restore_window_size }}
+    @{{ gsettings }} set {{ gs_base_schema }} restore-window-size {{ restore_window_size }} >/dev/null 2>&1
     @echo "${UI_SSYM}Set for defaulp profil: ${UI_SHIC}palette${UI_NORMAL} → ${UI_SHIC}\"{{ palette }}\"${UI_NORMAL}"
-    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} palette "{{ palette }}"
+    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} palette "{{ palette }}" >/dev/null 2>&1
     @echo "${UI_SSYM}Set for defaulp profil: ${UI_SHIC}opacity${UI_NORMAL} → ${UI_SHIC}{{ opacity }}${UI_NORMAL}"
-    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} opacity {{ opacity }}
+    @{{ gsettings }} set {{ replace(gs_profile_schema, "PTYXIS_PROFILE", PROFILE) }} opacity {{ opacity }} >/dev/null 2>&1
 
 _mark_bootstraped:
     @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].bootstrap=true')" > "${DOT_DOTFILES_STATE}"
