@@ -1,13 +1,15 @@
 set dotenv-filename := "../.env"
-set dotenv-load
+set dotenv-load := true
 
 apt_pkgs := "ptyxis"
 
 #install_method := "apt"
+
 install_method := "flatpak"
 getnf_font := "Meslo"
 
 # ptyxis global settings
+
 use_system_font := "false"
 font := "MesloLGS Nerd Font"
 fontsize := "12"
@@ -17,45 +19,30 @@ restore_session := "false"
 restore_window_size := "false"
 
 # ptyxis profile settings
+
 opacity := "0.9"
 palette := "Catppuccin Mocha"
 
 ## Install ptyxis via apt
+
 apt_gsettings := "gsettings"
+
 # Install ptyxis via flatpak
+
 flatpak_pkgs := "app.devsuite.Ptyxis"
 flatpak_gsettings := "flatpak run --command=gsettings " + flatpak_pkgs
-
 gsettings := if install_method == "apt" { apt_gsettings } else { flatpak_gsettings }
-
 gs_base_schema := "org.gnome.Ptyxis"
 gs_profile_schema := gs_base_schema + ".Profile:/org/gnome/Ptyxis/Profiles/PTYXIS_PROFILE/"
-
 ptyxis_wrapper := "/usr/bin/ptyxis.wrapper"
 
 # if justfile is run in current directroy recipe_prefix=''
 # if justfile is run from parent directroy recipe_prefix='package/'
+
 recipe_prefix := trim_start_match(justfile_directory() + '/', invocation_directory() + '/')
 current_package := file_stem(justfile_directory())
 
 _default:
-    @echo "Expressions:"
-    @echo "  \e[33;3mInstall settings:\e[0m"
-    @echo "    \e[36minstall_method\e[0m:      \e[32m{{ install_method }}\e[0m"
-    @echo ""
-    @echo "  \e[33;3mGlobal Ptyxis settings:\e[0m"
-    @echo "    \e[36muse_system_font\e[0m:     \e[32m{{ use_system_font }}\e[0m"
-    @echo "    \e[36mfont\e[0m:                \e[32m{{ quote(font) }}\e[0m"
-    @echo "    \e[36mfontsize\e[0m:            \e[32m{{ fontsize }}\e[0m"
-    @echo "    \e[36mdefault_columns\e[0m:     \e[32m{{ default_columns }}\e[0m"
-    @echo "    \e[36mdefault_rows\e[0m:        \e[32m{{ default_rows }}\e[0m"
-    @echo "    \e[36mrestore_session\e[0m:     \e[32m{{ restore_session }}\e[0m"
-    @echo "    \e[36mrestore_window_size\e[0m: \e[32m{{ restore_window_size }}\e[0m"
-    @echo ""
-    @echo "  \e[33;3mProfile Ptyxis settings:\e[0m"
-    @echo "    \e[36mopacity\e[0m:             \e[32m{{ opacity }}\e[0m"
-    @echo "    \e[36mpalette\e[0m:             \e[32m{{ quote(palette) }}\e[0m"
-    @echo
     @just --list --unsorted
 
 _done:

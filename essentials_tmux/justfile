@@ -1,15 +1,16 @@
-set dotenv-filename := '../.env'
-set dotenv-load
+set dotenv-filename := "../.env"
+set dotenv-load := true
 
 apt_pkgs := "tmux tmuxp"
 
 # if justfile is run in current directroy recipe_prefix=''
 # if justfile is run from parent directroy recipe_prefix='package/'
+
 recipe_prefix := trim_start_match(justfile_directory() + '/', invocation_directory() + '/')
 current_package := file_stem(justfile_directory())
 
 _default:
-    @just --list --unsorted 
+    @just --list --unsorted
 
 _done:
     @echo "${UI_FINISHED}"

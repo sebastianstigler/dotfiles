@@ -1,21 +1,21 @@
-set dotenv-filename := '../.env'
-set dotenv-load
+set dotenv-filename := "../.env"
+set dotenv-load := true
 
 neovim_version := "v0.11.7"
 neovim_install_dir := "/opt/neovim" / neovim_version
 neovim_appimage := "nvim-linux-x86_64.appimage"
 neovim_bin_name := "/usr/local/bin/nvim"
-
 apt_pkgs := "luarocks python3-venv"
 nvm_version := "v0.40.7"
 
 # if justfile is run in current directroy recipe_prefix=''
 # if justfile is run from parent directroy recipe_prefix='package/'
+
 recipe_prefix := trim_start_match(justfile_directory() + '/', invocation_directory() + '/')
 current_package := file_stem(justfile_directory())
 
 _default:
-    @just --list --unsorted 
+    @just --list --unsorted
 
 _done:
     @echo "${UI_FINISHED}"
@@ -65,7 +65,7 @@ _install_nvm_nodejs:
     #!/usr/bin/zsh
     echo -n "${UI_SSYM}Install ${UI_SHIC}nvm${UI_SCOL} and ${UI_SHIC}nodejs${UI_NORMAL}"
     if [ -s "$NVM_DIR/nvm.sh" ]; then echo $UI_SKIPPED; else echo ""
-    export NVM_DIR="$HOME/.config/nvm" 
+    export NVM_DIR="$HOME/.config/nvm"
     echo "${UI_PSYM}Install: ${UI_PHIC}nvm${UI_NORMAL}"
     PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_version }}/install.sh | bash' >/dev/null 2>&1
     source "$NVM_DIR/nvm.sh"

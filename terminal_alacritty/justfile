@@ -1,25 +1,25 @@
-set dotenv-filename := '../.env'
-set dotenv-load
+set dotenv-filename := "../.env"
+set dotenv-load := true
 
 apt_pkgs := "alacritty"
-
 getnf_font := "Meslo"
 font := "MesloLGS Nerd Font"
 
 # if justfile is run in current directroy recipe_prefix=''
 # if justfile is run from parent directroy recipe_prefix='package/'
+
 recipe_prefix := trim_start_match(justfile_directory() + '/', invocation_directory() + '/')
 current_package := file_stem(justfile_directory())
 
 _default:
-    @just --list --unsorted 
+    @just --list --unsorted
 
 _done:
     @echo "${UI_FINISHED}"
 
 # Install alacritty dependencies
 bootstrap: && _check_dotfiles_bootstraped _install_apt_pkgs _install_font _hint_set_default_terminal _mark_bootstraped _mark_done _done
-    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ file_stem(justfile_directory()) }}${UI_NORMAL}"
+    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ current_package }}${UI_NORMAL}"
 
 _check_dotfiles_bootstraped:
     @echo -n "${UI_SSYM}Dotfiles bootstraped${UI_NORMAL}"
