@@ -1,0 +1,84 @@
+set dotenv-filename := "../.env"
+set dotenv-load := true
+
+# if justfile is run in current directroy recipe_prefix=''
+# if justfile is run from parent directroy recipe_prefix='package/'
+
+recipe_prefix := trim_start_match(justfile_directory() + '/', invocation_directory() + '/')
+current_package := file_stem(justfile_directory())
+
+_default:
+    @just --list --unsorted
+
+_done:
+    @echo "${UI_FINISHED}"
+
+# Install alacritty dependencies
+settings: && _check_dotfiles_bootstraped _choose_local_zsh _mark_settings _mark_done _done
+    @echo "${UI_RSYM}Set home or work local.zsh ${UI_RHIC}{{ current_package }}${UI_NORMAL}"
+
+_check_dotfiles_bootstraped:
+    @echo -n "${UI_SSYM}Dotfiles bootstraped${UI_NORMAL}"
+    @if [ -f "${DOT_DOTFILES_STATE}" ] && jq -e '.bootstrap == true' "${DOT_DOTFILES_STATE}" >/dev/null; then echo " $UI_DONE"; else echo " ${UI_PENDING}";\
+    echo "${UI_ASYM}First run: ${UI_AHIC}(cd $(dirname {{ justfile_directory() }}); just bootstrap)${UI_NORMAL}"; \
+    exit 1; \
+    fi
+
+_choose_local_zsh:
+    #!/bin/bash
+
+    echo -e "${UI_SSYM}Choose local settings for ${UI_SHIC}.zshrc${UI_SCOL}:${UI_NORMAL}\n"
+
+    # TODO: Nice texts
+    options=($(cd $HOME/.config/zsh; /usr/bin/find . -maxdepth 1  -name "local_*.zsh" | sort ))
+    indent='      '
+    choice=''
+    i=0
+    for i in "${!options[@]}"
+    do
+        echo -e "${indent}${UI_PCOL}$(( i + 1 ))) ${UI_PHIC}${options[$i]}${UI_NORMAL}"
+    done
+    echo ""
+
+    while true
+    do
+        echo -en "${indent}${UI_ACOL}Your choice? ${UI_NORMAL}"
+        read -r choice
+        if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#options[@]} )); then
+            echo -e "\e[1A\e[2K${indent}${UI_SWAC}Invalid choice ${UI_SEMC}${choice}${UI_NORMAL}"
+            continue
+        fi
+        opt="${options[$((choice -1))]}"
+        case $opt in
+            "./local_"*)
+                echo -e "\n${indent}\e[0;32;1mYou choose \e[0;32;3m$opt${UI_NORMAL}"
+                (cd $HOME/.config/zsh; ln -sf $opt local.zsh;)
+                break
+                ;;
+            *)
+                echo "${indent}${UI_SWAC}Unkownen option ${UI_SEMC}$opt${UI_NORMAL}"
+                ;;
+        esac
+    done
+
+_mark_settings:
+    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].settings=true')" > "${DOT_DOTFILES_STATE}"
+    @sync "$DOT_DOTFILES_STATE"
+
+_mark_done:
+    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].done=true')" > "${DOT_DOTFILES_STATE}"
+    @sync "$DOT_DOTFILES_STATE"
+
+# Is there something to install or configure
+todo:
+    #!/bin/bash
+    echo -e "${UI_RSYM}Is there still something todo?${UI_NORMAL}"
+
+    echo -ne "${UI_SSYM}Settings for ${UI_SHIC}{{ current_package }}${UI_NORMAL}"
+    if [ -f "${DOT_DOTFILES_STATE}" ] && jq --arg pkgname {{ current_package }} -e '.packages.[$pkgname].settings == true' "${DOT_DOTFILES_STATE}" >/dev/null; then
+        echo -e " ${UI_DONE}"
+    else
+        echo -e " ${UI_PENDING}"
+        echo -e "${UI_ASYM}Run: ${UI_AHIC}just {{ recipe_prefix }}settings${UI_NORMAL}"
+        exit 0
+    fi
