@@ -53,7 +53,7 @@ vnoremap ( s()<Esc>P<Right>%
 vnoremap [ s[]<Esc>P<Right>%
 vnoremap { s{}<Esc>P<Right>%
 
-colorscheme desert
+colorscheme catppuccin
 set termguicolors
 
 " Leerzeichen und Tabdarstellung:
