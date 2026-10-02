@@ -117,3 +117,19 @@ vim.keymap.set('n', '<F8>', '<cmd>DiffOrig<CR>', { silent = true })
 vim.keymap.set('i', '<F8>', '<Esc><cmd>DiffOrig<CR>', { silent = true })
 -- set list
 vim.keymap.set('n', '<leader>l', '<cmd>set list!<CR>', opts)
+-- spellings
+vim.keymap.set('n', '<F2>', '<cmd>set spell!<CR>', opts)
+vim.keymap.set('i', '<F2>', '<Esc><cmd>set spell!<CR>', opts)
+
+vim.api.nvim_create_user_command('SpellLangToggle', function()
+  local current_lang = table.concat(vim.opt_local.spelllang:get(), ',')
+  if current_lang == 'de,en' then
+    vim.opt.spelllang = { 'de' }
+  elseif current_lang == 'de' then
+    vim.opt.spelllang = { 'en' }
+  elseif current_lang == 'en' then
+    vim.opt.spelllang = { 'de', 'en' }
+  end
+end, {})
+vim.keymap.set('n', '<F26>', '<cmd>SpellLangToggle<CR>', opts) -- C+F2
+vim.keymap.set('i', '<F26>', '<Esc><cmd>SpellLangToggle<CR>', opts) -- C+F2

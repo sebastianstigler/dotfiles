@@ -37,6 +37,15 @@ return {
       cond = hide_in_width,
     }
 
+    local function spell_lang_status()
+      if not vim.opt_local.spell:get() then
+        return ''
+      end
+      -- Get the first language from the spelllang array
+      local lang = table.concat(vim.opt_local.spelllang:get(), ',')
+      return '📝 ' .. (lang or 'unknown')
+    end
+
     require('lualine').setup {
       options = {
         icons_enabled = true,
@@ -53,7 +62,7 @@ return {
         lualine_a = { mode },
         lualine_b = { 'branch' },
         lualine_c = { filename },
-        lualine_x = { diagnostics, diff, { 'encoding', cond = hide_in_width }, { 'filetype', cond = hide_in_width } },
+        lualine_x = { diagnostics, diff, { 'encoding', cond = hide_in_width }, { 'filetype', cond = hide_in_width }, spell_lang_status },
         lualine_y = { 'location' },
         lualine_z = { 'progress' },
       },

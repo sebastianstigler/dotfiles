@@ -62,3 +62,6 @@ vim.api.nvim_create_autocmd('InsertLeave', {
     vim.api.nvim_set_hl(0, 'TrailingWhitespace', { link = 'Error' })
   end,
 })
+-- spelling support
+vim.opt.spell = true
+vim.opt.spelllang = { 'de', 'en' }
