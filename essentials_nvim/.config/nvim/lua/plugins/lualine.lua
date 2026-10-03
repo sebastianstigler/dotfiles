@@ -43,10 +43,10 @@ return {
       end
       -- Get the first language from the spelllang array
       local lang = table.concat(vim.opt_local.spelllang:get(), ',')
-      return '%#SpellIcon#󰓆%*%#lualine_c_normal# ' .. (lang or 'unknown') .. '%*'
+      return '%#SpellIcon#󰄴%*%#lualine_c_normal# ' .. (lang or 'unknown') .. '%*'
     end
 
-    vim.api.nvim_set_hl(0, 'SpellIcon', { fg = '#f38ba8', bg = '#4c566a' })
+    vim.api.nvim_set_hl(0, 'SpellIcon', { fg = '#f38ba8', bg = '#4c566a', bold = true })
 
     require('lualine').setup {
       options = {
