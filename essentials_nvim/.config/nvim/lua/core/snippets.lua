@@ -42,3 +42,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+-- Highlight trailing whitespaces
+vim.api.nvim_set_hl(0, 'TrailingWhitespaceNormal', { fg = '#ff3c00', bg = '#cacdd2', bold = true })
+vim.api.nvim_set_hl(0, 'TrailingWhitespaceInsert', { fg = '#ff3c00', bg = 'NONE' })
+vim.cmd [[match TrailingWhitespace /\s\+$/]]
+vim.api.nvim_set_hl(0, 'TrailingWhitespace', { link = 'TrailingWhitespaceNormal' })
+vim.api.nvim_create_autocmd('InsertEnter', {
+  callback = function()
+    vim.opt.listchars.trail = nil
+    vim.api.nvim_set_hl(0, 'TrailingWhitespace', { link = 'TrailingWhitespaceInsert' })
+  end,
+})
+vim.api.nvim_create_autocmd('InsertLeave', {
+  callback = function()
+    vim.opt.listchars.trail = '·'
+    vim.api.nvim_set_hl(0, 'TrailingWhitespace', { link = 'TrailingWhitespaceNormal' })
+  end,
+})

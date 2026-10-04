@@ -44,24 +44,6 @@ vim.opt.iskeyword:append '-' -- Hyphenated words recognized by searches (default
 vim.opt.formatoptions:remove { 'c', 'r', 'o' } -- Don't insert the current comment leader automatically for auto-wrapping comments using 'textwidth', hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode. (default: 'croql')
 vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- Separate Vim plugins from Neovim in case Vim still in use (default: includes this path if Vim is installed)
 vim.opt.listchars:append { tab = '»·', trail = '·', conceal = '¤', extends = '>', precedes = '<' } -- , eol = '↲' }
-
-vim.opt.list = true -- show list symbols
-
--- Highlight trailing whitespaces
-vim.cmd [[match TrailingWhitespace /\s\+$/]]
-vim.api.nvim_set_hl(0, 'TrailingWhitespace', { link = 'Error' })
-vim.api.nvim_create_autocmd('InsertEnter', {
-  callback = function()
-    vim.opt.listchars.trail = nil
-    vim.api.nvim_set_hl(0, 'TrailingWhitespace', { link = 'Witespace' })
-  end,
-})
-vim.api.nvim_create_autocmd('InsertLeave', {
-  callback = function()
-    vim.opt.listchars.trail = '·'
-    vim.api.nvim_set_hl(0, 'TrailingWhitespace', { link = 'Error' })
-  end,
-})
--- spelling support
-vim.opt.spell = true
-vim.opt.spelllang = { 'de', 'en' }
+vim.opt.list = true -- Show list symbols
+vim.opt.spell = true -- Spelling support on
+vim.opt.spelllang = { 'de', 'en' } -- Default spelling languages
