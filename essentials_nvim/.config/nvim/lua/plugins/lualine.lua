@@ -37,6 +37,8 @@ return {
       cond = hide_in_width,
     }
 
+    vim.api.nvim_set_hl(0, 'SpellIcon', { fg = '#f38ba8', bg = '#4c566a', bold = true })
+
     local function spell_lang_status()
       if not vim.opt_local.spell:get() then
         return ''
@@ -45,8 +47,6 @@ return {
       local lang = table.concat(vim.opt_local.spelllang:get(), ',')
       return '%#SpellIcon#󰄴%*%#lualine_c_normal# ' .. (lang or 'unknown') .. '%*'
     end
-
-    vim.api.nvim_set_hl(0, 'SpellIcon', { fg = '#f38ba8', bg = '#4c566a', bold = true })
 
     require('lualine').setup {
       options = {
