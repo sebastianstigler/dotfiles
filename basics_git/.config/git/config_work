@@ -5,6 +5,7 @@
 	editor = nvim
 	pager = bat --style=plain
 	autocrlf = input
+	symlink = true
 [commit]
 	template = ~/.config/git/message
 [color]
@@ -23,3 +24,5 @@
 	default = matching
 [init]
 	defaultBranch = master
+[merge]
+	tool = nvimdiff2
