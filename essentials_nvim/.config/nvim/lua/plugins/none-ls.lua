@@ -6,6 +6,7 @@ return {
   },
   config = function()
     local null_ls = require 'null-ls'
+    local helpers = require 'null-ls.helpers'
     local formatting = null_ls.builtins.formatting -- to setup formatters
     local diagnostics = null_ls.builtins.diagnostics -- to setup linters
 
@@ -21,11 +22,42 @@ return {
         -- 'stylua', -- lua formatter; Already installed via Mason
         -- 'ruff', -- Python linter and formatter; Already installed via Mason
       },
-      automatic_installation = true,
+      -- automatic_installation = true,
+      automatic_installation = {
+        exclude = { 'checkmake' },
+      },
+    }
+
+    local checkmake = {
+      name = 'checkmake',
+      method = null_ls.methods.DIAGNOSTICS,
+      filetypes = { 'make' },
+
+      generator = null_ls.generator {
+        command = 'checkmake',
+        args = {
+          '--format={{.LineNumber}}:{{.Rule}}:{{.Violation}}',
+          '$FILENAME',
+        },
+        format = 'line',
+        ignore_stderr = true,
+        check_exit_code = function(code)
+          return code == 0 or code == 1
+        end,
+        debounce = 250,
+
+        on_output = helpers.diagnostics.from_patterns {
+          {
+            pattern = '^(%d+):([^:]+):(.*)$',
+            groups = { 'row', 'code', 'message' },
+          },
+        },
+      },
     }
 
     local sources = {
-      diagnostics.checkmake,
+      --diagnostics.checkmake,
+      checkmake,
       formatting.prettier.with { filetypes = { 'html', 'json', 'yaml' } },
       formatting.stylua,
       formatting.shfmt.with { args = { '-i', '4' } },
