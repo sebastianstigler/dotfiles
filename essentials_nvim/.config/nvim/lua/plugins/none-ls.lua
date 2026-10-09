@@ -29,7 +29,6 @@ return {
       formatting.prettier.with { filetypes = { 'html', 'json', 'yaml' } },
       formatting.stylua,
       formatting.shfmt.with { args = { '-i', '4' } },
-      formatting.terraform_fmt,
       formatting.clang_format.with { filetypes = { 'c', 'cpp', 'h', 'hpp' } },
       formatting.markdownlint,
       diagnostics.markdownlint,
