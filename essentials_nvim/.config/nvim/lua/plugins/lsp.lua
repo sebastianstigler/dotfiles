@@ -153,7 +153,6 @@ return {
       tailwindcss = {},
       dockerls = {},
       sqlls = {},
-      terraformls = {},
       jsonls = {},
       yamlls = {},
       lua_ls = {
