@@ -47,3 +47,4 @@ vim.opt.listchars:append { tab = '»·', trail = '·', conceal = '¤', extends =
 vim.opt.list = true -- Show list symbols
 vim.opt.spell = true -- Spelling support on
 vim.opt.spelllang = { 'de', 'en' } -- Default spelling languages
+vim.o.winborder = 'rounded'
