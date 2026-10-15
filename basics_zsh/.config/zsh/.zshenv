@@ -60,6 +60,10 @@ _fzf_comprun() {
   esac
 }
 
+# ---------- TMUX ----------
+#
+export DISABLE_AUTO_TITLE=true
+
 # ---------- PATH ----------
 # Personal binaries/scripts
 if [[ -d "$HOME/bin" ]]; then
