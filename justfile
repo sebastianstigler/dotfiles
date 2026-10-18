@@ -10,7 +10,7 @@ font := "MesloLGS Nerd Font"
 zshenv := "/etc/zsh/zshenv"
 stow_basics := "zsh git vim"
 stow_essentials := "nvim tmux"
-stow_terminal := "alacritty ptyxis"
+stow_terminal := "alacritty ptyxis ghostty"
 current_package := file_stem(justfile_directory())
 
 _default:
@@ -179,7 +179,7 @@ _stow_action action show_justfile +pkgs: && _done
                 pkg_dirs+=(basics_$pkg) ;;
             tmux|nvim)
                 pkg_dirs+=(essentials_$pkg) ;;
-            alacritty|ptyxis)
+            alacritty|ptyxis|ghostty)
                 pkg_dirs+=(terminal_$pkg) ;;
             *) echo -e "${UI_SERS}$pkg${UI_SEMC} is an unknown package for stow${UI_SERE}">&2
                 exit 1

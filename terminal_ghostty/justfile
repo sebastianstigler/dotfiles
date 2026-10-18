@@ -1,0 +1,71 @@
+set dotenv-filename := "../.env"
+set dotenv-load := true
+
+getnf_font := "Meslo"
+font := "MesloLGS Nerd Font"
+
+# if justfile is run in current directroy recipe_prefix=''
+# if justfile is run from parent directroy recipe_prefix='package/'
+
+recipe_prefix := trim_start_match(justfile_directory() + '/', invocation_directory() + '/')
+current_package := file_stem(justfile_directory())
+
+_default:
+    @just --list --unsorted
+
+_done:
+    @echo "${UI_FINISHED}"
+
+# Install ghostty dependencies
+bootstrap: && _check_dotfiles_bootstraped _install_snap_pkgs _install_font _hint_set_default_terminal _mark_bootstraped _mark_done _done
+    @echo "${UI_RSYM}Install dependencies for ${UI_RHIC}{{ current_package }}${UI_NORMAL}"
+
+_check_dotfiles_bootstraped:
+    @echo -n "${UI_SSYM}Dotfiles bootstraped${UI_NORMAL}"
+    @if [ -f "${DOT_DOTFILES_STATE}" ] && jq -e '.bootstrap == true' "${DOT_DOTFILES_STATE}" >/dev/null; then echo " $UI_DONE"; else echo " ${UI_PENDING}";\
+    echo "${UI_ASYM}First run: ${UI_AHIC}(cd $(dirname {{ justfile_directory() }}); just bootstrap)${UI_NORMAL}"; \
+    exit 1; \
+    fi
+ 
+_install_snap_pkgs:
+    @echo -n "${UI_SSYM}Install ${UI_SHIC}snap${UI_SCOL} packages${UI_NORMAL}"
+    @if command -v ghostty 2>&1 >/dev/null; then echo $UI_SKIPPED; else echo ""; \
+    echo "${UI_PSYM}Install: ${UI_PHIC}ghostty${UI_NORMAL}"; \
+    sudo snap install ghostty --classic >/dev/null; \
+    fi
+
+_install_font:
+    @echo -n "${UI_SSYM}Install font ${UI_SHIC}{{ font }}${UI_NORMAL}"
+    @if [ "$(fc-match "{{ font }}" -f '%{family}')" = "{{ font }}" ]; then echo $UI_SKIPPED; else echo ""; \
+    ~/.local/bin/getnf -i "{{ getnf_font }}" | paste /dev/null -; \
+    fi
+
+_hint_set_default_terminal:
+    @echo "${UI_SSYM}Set default terminal"
+    @echo "${UI_ASYM}To set ${UI_AHIC}ghostty${UI_ACOL} as your default teminal run:"
+    @echo "${UI_AIND}${UI_AHIC}sudo update-alternatives --config x-terminal-emulator${UI_NORMAL}"
+
+_mark_bootstraped:
+    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].bootstrap=true')" > "${DOT_DOTFILES_STATE}"
+    @sync "$DOT_DOTFILES_STATE"
+
+_mark_done:
+    @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].done=true')" > "${DOT_DOTFILES_STATE}"
+    @sync "$DOT_DOTFILES_STATE"
+
+# Is there something to install or configure
+todo:
+    #!/bin/bash
+    echo -e "${UI_RSYM}Is there still something todo?${UI_NORMAL}"
+
+    # if not bootstrap -> just bootstrap
+    echo -ne "${UI_SSYM}Bootstrap for ${UI_SHIC}{{ current_package }}${UI_NORMAL}"
+    if [ -f "${DOT_DOTFILES_STATE}" ] && jq --arg pkgname {{ current_package }} -e '.packages.[$pkgname].bootstrap == true' "${DOT_DOTFILES_STATE}" >/dev/null; then
+        echo -e " ${UI_DONE}"
+    else
+        echo -e " ${UI_PENDING}"
+        echo -e "${UI_ASYM}Run: ${UI_AHIC}just {{ recipe_prefix }}bootstrap${UI_NORMAL}"
+        exit 0
+    fi
+
+# TODO: wrapper + register for update-alternatives
