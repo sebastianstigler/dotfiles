@@ -26,12 +26,14 @@ _check_dotfiles_bootstraped:
     echo "${UI_ASYM}First run: ${UI_AHIC}(cd $(dirname {{ justfile_directory() }}); just bootstrap)${UI_NORMAL}"; \
     exit 1; \
     fi
- 
+
 _install_snap_pkgs:
     @echo -n "${UI_SSYM}Install ${UI_SHIC}snap${UI_SCOL} packages${UI_NORMAL}"
     @if command -v ghostty 2>&1 >/dev/null; then echo $UI_SKIPPED; else echo ""; \
     echo "${UI_PSYM}Install: ${UI_PHIC}ghostty${UI_NORMAL}"; \
     sudo snap install ghostty --classic >/dev/null; \
+    echo "${UI_PSYM}Register wrapper for ${UI_PHIC}update-alternatives${UI_NORMAL}"; \
+    sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /snap/bin/ghostty 50; \
     fi
 
 _install_font:
@@ -42,8 +44,9 @@ _install_font:
 
 _hint_set_default_terminal:
     @echo "${UI_SSYM}Set default terminal"
-    @echo "${UI_ASYM}To set ${UI_AHIC}ghostty${UI_ACOL} as your default teminal run:"
+    @echo "${UI_ASYM}To set ${UI_AHIC}ghostty${UI_ACOL} as your default teminal run both:"
     @echo "${UI_AIND}${UI_AHIC}sudo update-alternatives --config x-terminal-emulator${UI_NORMAL}"
+    @echo "${UI_AIND}${UI_AHIC}gsettings set org.gnome.desktop.default-applications.terminal exec '/snap/bin/ghostty'${UI_NORMAL}"
 
 _mark_bootstraped:
     @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].bootstrap=true')" > "${DOT_DOTFILES_STATE}"
@@ -67,5 +70,3 @@ todo:
         echo -e "${UI_ASYM}Run: ${UI_AHIC}just {{ recipe_prefix }}bootstrap${UI_NORMAL}"
         exit 0
     fi
-
-# TODO: wrapper + register for update-alternatives
