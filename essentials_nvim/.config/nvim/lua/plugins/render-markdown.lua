@@ -20,5 +20,11 @@ return {
       min_width = 77,
       border = true,
     },
+    html = {
+      comment = {
+        conceal = false,
+        highlight = 'RenderMarkdownHtmlComment',
+      },
+    },
   },
 }
