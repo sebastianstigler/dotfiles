@@ -23,6 +23,7 @@ $character"""
 
 add_newline = false
 palette = "p10k"
+scan_timeout = 60
 
 [palettes.p10k]
 dir_fg = "31"
