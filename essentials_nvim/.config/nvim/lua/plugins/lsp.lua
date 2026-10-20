@@ -179,6 +179,17 @@ return {
       clangd = {},
       marksman = {},
       texlab = {},
+      just = {
+        init_options = {
+          formatting = {
+            --indentation = '\t',
+          },
+          rules = {
+            ['unused-variable'] = 'off',
+            ['unused-recipe-parameter'] = { level = 'warning' },
+          },
+        },
+      },
     }
 
     -- Ensure the servers and tools above are installed
