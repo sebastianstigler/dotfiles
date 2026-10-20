@@ -10,5 +10,5 @@ window-theme = ghostty
 
 keybind = ctrl+,=text:ghostty +edit-config\n
 
-custom-shader = shaders/cursor_frozen.glsl
-#custom-shader = shaders/WIP.glsl
+#custom-shader = shaders/cursor_frozen.glsl
+##custom-shader = shaders/WIP.glsl
