@@ -19,6 +19,7 @@ return {
         'checkmake', -- linter for Makefiles
         'clang-format', -- C, C++ formater
         'markdownlint', -- markdown linter
+        'tex-fmt', -- latex formater
         -- 'stylua', -- lua formatter; Already installed via Mason
         -- 'ruff', -- Python linter and formatter; Already installed via Mason
       },
@@ -54,14 +55,23 @@ return {
         },
       },
     }
+    local tex_fmt = {
+      method = null_ls.methods.FORMATTING,
+      filetypes = { 'tex' },
+      generator = null_ls.formatter {
+        command = 'tex-fmt',
+        args = { '--stdin' },
+        to_stdin = true,
+      },
+    }
 
     local sources = {
-      --diagnostics.checkmake,
       checkmake,
       formatting.prettier.with { filetypes = { 'html', 'json', 'yaml' } },
       formatting.stylua,
       formatting.shfmt.with { args = { '-i', '4' } },
       formatting.clang_format.with { filetypes = { 'c', 'cpp', 'h', 'hpp' } },
+      tex_fmt,
       formatting.markdownlint,
       diagnostics.markdownlint,
       require('none-ls.formatting.ruff').with { extra_args = { '--extend-select', 'I' } },
