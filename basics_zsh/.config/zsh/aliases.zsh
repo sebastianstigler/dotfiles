@@ -29,3 +29,6 @@ compdef vi=nvim
 # Completion via ./completion/_eza
 # Update completion to match eza version!
 
+# ---------- ghostty ------
+# ghosty sets the GDK_PIXBUF_MODULE_FILE
+alias evince='env -u GDK_PIXBUF_MODULE_FILE evince'
