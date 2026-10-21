@@ -4,21 +4,25 @@ return {
   ---@module 'render-markdown'
   ---@type render.md.UserConfig
   opts = {
-    render_modes = { 'n', 'c', 't' },
+    checkbox = {
+      checked = {
+        scope_highlight = '@markup.strikethrough',
+      },
+    },
     code = {
-      conceal_delimiters = false,
-      width = 'block',
-      left_pad = 2,
-      right_pad = 4,
-      min_width = 60,
       border = 'thick',
+      conceal_delimiters = false,
+      left_pad = 2,
+      min_width = 60,
+      right_pad = 4,
+      width = 'block',
     },
     heading = {
-      width = 'block',
-      left_pad = 2,
-      right_pad = 4,
-      min_width = 77,
       border = true,
+      left_pad = 2,
+      min_width = 77,
+      right_pad = 4,
+      width = 'block',
     },
     html = {
       comment = {
@@ -26,5 +30,6 @@ return {
         highlight = 'RenderMarkdownHtmlComment',
       },
     },
+    render_modes = { 'n', 'c', 't' },
   },
 }
