@@ -7,14 +7,14 @@
 # Update completion to match fdfind version!
 alias fd='fdfind'
 
-# ---------- Batcat ----------
+# ---------- Batcat -----------
 # Completion comes with apt package.
 # Use completion from batcat for alias.
 if command -v batcat >/dev/null 2>&1; then
   alias bat='batcat'
   compdef bat=batcat
 fi
-# ---------- Neovim ----------
+# ---------- Neovim -----------
 # Completion comes with apt package.
 # Use completion from nvim for alias.
 # Set in .zshenv EDITOR and and VISUAL
@@ -24,11 +24,11 @@ alias vi='nvim'
 compdef v=nvim
 compdef vi=nvim
 
-# ---------- Eza ----------
+# ---------- Eza --------------
 # Aliases are mangeged by oh-my-zsh
 # Completion via ./completion/_eza
 # Update completion to match eza version!
 
-# ---------- Ghostty ------
+# ---------- Ghostty ----------
 # ghostty sets the GDK_PIXBUF_MODULE_FILE
 alias evince='env -u GDK_PIXBUF_MODULE_FILE evince'
