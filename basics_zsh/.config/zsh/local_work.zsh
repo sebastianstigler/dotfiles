@@ -1,8 +1,12 @@
 export GIT_CONFIG_GLOBAL=$HOME/.config/git/config_work
 
 # flutter
-if [[ -d  "/flut/flutter/3.27.4/bin" ]]; then
-  export PATH="/flut/flutter/3.27.4/bin:$PATH"
+FLUTTER_PATH="/flut/flutter/3.27.4/bin"
+if [[ -d $FLUTTER_PATH  ]]; then
+  case ":$PATH:" in
+    *":${FLUTTER_PATH}:"*) ;;
+    *) export PATH="${FLUTTER_PATH}:$PATH" ;;
+  esac
 fi
 
 # cargo / rust

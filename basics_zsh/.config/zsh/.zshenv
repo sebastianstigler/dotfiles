@@ -67,7 +67,12 @@ export DISABLE_AUTO_TITLE=true
 # ---------- PATH ----------
 # Personal binaries/scripts
 if [[ -d "$HOME/bin" ]]; then
-  export PATH="$HOME/bin":$PATH
+  case ":${PATH}:" in
+    *":$HOME/bin:"*) ;;
+    *) export PATH="$HOME/bin":$PATH ;;
+  esac
 fi
-export PATH="$HOME/.local/bin:$PATH"
-
+case ":$PATH:" in
+  *":$HOME/.local/bin:"*) ;;
+  *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac
