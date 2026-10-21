@@ -32,3 +32,7 @@ compdef vi=nvim
 # ---------- Ghostty ----------
 # ghostty sets the GDK_PIXBUF_MODULE_FILE
 alias evince='env -u GDK_PIXBUF_MODULE_FILE evince'
+
+# ---------- CD ---------------
+# cd..
+alias 'cd..'='cd ..'
