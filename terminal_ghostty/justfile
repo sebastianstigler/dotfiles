@@ -1,5 +1,5 @@
 set dotenv-filename := "../.env"
-set dotenv-load := true
+set dotenv-load
 
 getnf_font := "Meslo"
 font := "MesloLGS Nerd Font"

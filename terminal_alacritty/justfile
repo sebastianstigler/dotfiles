@@ -1,5 +1,5 @@
 set dotenv-filename := "../.env"
-set dotenv-load := true
+set dotenv-load
 
 apt_pkgs := "alacritty"
 getnf_font := "Meslo"
@@ -56,6 +56,7 @@ _hint_set_default_terminal:
     @echo "${UI_SSYM}Set default terminal"
     @echo "${UI_ASYM}To set ${UI_AHIC}alacritty${UI_ACOL} as your default teminal run:"
     @echo "${UI_AIND}${UI_AHIC}sudo update-alternatives --config x-terminal-emulator${UI_NORMAL}"
+    @echo "${UI_AIND}${UI_AHIC}gsettings set org.gnome.desktop.default-applications.terminal exec '/usr/bin/alacritty'${UI_NORMAL}"
 
 _mark_bootstraped:
     @echo "$(cat "${DOT_DOTFILES_STATE}" | jq --arg pkgname {{ current_package }} '.packages.[$pkgname].bootstrap=true')" > "${DOT_DOTFILES_STATE}"

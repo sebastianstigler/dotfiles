@@ -1,5 +1,5 @@
 set dotenv-filename := "../.env"
-set dotenv-load := true
+set dotenv-load
 
 apt_pkgs := "ptyxis"
 
@@ -127,8 +127,9 @@ _hint_set_default_terminal:
     @echo "${UI_SSYM}Set default terminal"
     @echo "${UI_ASYM}To set ${UI_AHIC}ptyxis${UI_ACOL} as your default teminal run:"
     @echo "${UI_AIND}${UI_AHIC}sudo update-alternatives --config x-terminal-emulator${UI_NORMAL}"
+    @echo "${UI_AIND}${UI_AHIC}gsettings set org.gnome.desktop.default-applications.terminal exec '{{ ptyxis_wrapper }}'${UI_NORMAL}"
 
-# Set my prefered settings
+# Set my preferred settings
 settings: _check_current_package_bootstraped && _mark_settings _mark_done _done
     @profile=$({{ gsettings }} get {{ gs_base_schema }} default-profile-uuid 2>/dev/null | sed "s/'//g"); \
     echo "${UI_RSYM}Settings for ${UI_RHIC}{{ current_package }}${UI_RCOL} for profile ${UI_RHIC}${profile}${UI_NORMAL}"; \
