@@ -122,6 +122,11 @@ end, { desc = 'Go to next diagnostic message' })
 
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+vim.keymap.set('n', '<leader>dt', function()
+  vim.diagnostic.config {
+    virtual_text = not vim.diagnostic.config().virtual_text,
+  }
+end, { desc = 'Toggle diagnostic virtual text' })
 
 -- Show changes in an unsaved file to the saved version
 vim.api.nvim_create_user_command('DiffOrig', function()
