@@ -192,3 +192,5 @@ end, opts)
 -- vim.keymap.set('n', '<leader>example', function()
 --   vim.fn.chansend(job_id, { 'ls -la\r\n' })
 -- end)
+
+vim.keymap.set('t', '<C-space>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
