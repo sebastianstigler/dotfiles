@@ -87,7 +87,7 @@ zstyle ':omz:plugins:eza' 'header' yes
 zstyle ':omz:plugins:eza' 'icons' yes
 zstyle ':omz:plugins:eza' 'show-group' yes
 
-plugins=(git todotxt jump pass jupyter tmuxp vagrant pipx pip_ext uv sslmanager direnv gh just eza fzf uv)
+plugins=(git todotxt jump pass jupyter tmuxp vagrant pipx pip_ext uv sslmanager direnv gh just eza fzf uv sshch)
 
 source $ZSH/oh-my-zsh.sh
 
