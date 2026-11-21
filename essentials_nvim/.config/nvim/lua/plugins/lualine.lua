@@ -48,6 +48,15 @@ return {
       return '%#SpellIcon#󰄴%*%#lualine_c_normal# ' .. (lang or 'unknown') .. '%*'
     end
 
+    vim.api.nvim_set_hl(0, 'ListIcon', { fg = '#f9e2af', bg = '#4c566a', bold = true })
+
+    local function list_status()
+      if not vim.opt_local.list:get() then
+        return ''
+      end
+      return '[%#ListIcon#L%*%#lualine_c_normal#]%*'
+    end
+
     require('lualine').setup {
       options = {
         icons_enabled = true,
@@ -64,7 +73,7 @@ return {
         lualine_a = { mode },
         lualine_b = { 'branch' },
         lualine_c = { filename },
-        lualine_x = { diagnostics, diff, { 'encoding', cond = hide_in_width }, { 'filetype', cond = hide_in_width }, spell_lang_status },
+        lualine_x = { diagnostics, diff, list_status, { 'encoding', cond = hide_in_width }, { 'filetype', cond = hide_in_width }, spell_lang_status },
         lualine_y = { 'location' },
         lualine_z = { 'progress' },
       },

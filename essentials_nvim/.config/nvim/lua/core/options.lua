@@ -5,8 +5,8 @@ vim.o.wrap = false -- Display lines as one long line (default: true)
 vim.o.linebreak = true -- Companion to wrap, don't split words (default: false)
 vim.o.mouse = 'a' -- Enable mouse mode (default: '')
 vim.o.autoindent = true -- Copy indent from current line when starting new one (default: true)
-vim.o.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search (default: false)
-vim.o.smartcase = true -- Smart case (default: false)
+vim.o.ignorecase = false -- Case-insensitive searching UNLESS \C or capital in search (default: false)
+vim.o.smartcase = false -- Smart case (default: false)
 vim.o.shiftwidth = 4 -- The number of spaces inserted for each indentation (default: 8)
 vim.o.tabstop = 4 -- Insert n spaces for a tab (default: 8)
 vim.o.softtabstop = 4 -- Number of spaces that a tab counts for while performing editing operations (default: 0)
@@ -43,7 +43,7 @@ vim.opt.shortmess:append 'c' -- Don't give |ins-completion-menu| messages (defau
 vim.opt.iskeyword:append '-' -- Hyphenated words recognized by searches (default: does not include '-')
 vim.opt.formatoptions:remove { 'c', 'r', 'o' } -- Don't insert the current comment leader automatically for auto-wrapping comments using 'textwidth', hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode. (default: 'croql')
 vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- Separate Vim plugins from Neovim in case Vim still in use (default: includes this path if Vim is installed)
-vim.opt.listchars:append { tab = '»·', trail = '·', conceal = '¤', extends = '>', precedes = '<' } -- , eol = '↲' }
+vim.opt.listchars:append { tab = '»·', trail = '·', lead = '·', conceal = '¤', extends = '>', precedes = '<', eol = '↲' }
 vim.opt.list = true -- Show list symbols
 vim.opt.spell = true -- Spelling support on
 vim.opt.spelllang = { 'de', 'en' } -- Default spelling languages
