@@ -73,6 +73,13 @@ return {
         -- or a suggestion from your LSP for this to activate.
         map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
+        -- Opens manpage instead
+        --map('<leader>m', '<cmd>Man<CR>', 'Print manpage for symbol')
+        map('<leader>m', function()
+          local section = vim.v.count
+          vim.cmd('Man ' .. (section > 0 and section or '') .. ' ' .. vim.fn.expand '<cword>')
+        end, 'Print manpage for symbol')
+
         -- WARN: This is not Goto Definition, this is Goto Declaration.
         --  For example, in C this would take you to the header.
         map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
