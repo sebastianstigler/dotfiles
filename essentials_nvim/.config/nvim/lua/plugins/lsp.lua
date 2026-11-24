@@ -80,6 +80,14 @@ return {
           vim.cmd('Man ' .. (section > 0 and section or '') .. ' ' .. vim.fn.expand '<cword>')
         end, 'Print manpage for symbol')
 
+        -- HACK for telescope border problem
+        -- keep telescopes border = true (is default value)
+        -- set vim.opt.winborder = "none"
+        -- overwrite keymap for K:
+        map('K', function()
+          vim.lsp.buf.hover { border = 'rounded', title = ' hover ' }
+        end, 'Show infos for Symbol')
+
         -- WARN: This is not Goto Definition, this is Goto Declaration.
         --  For example, in C this would take you to the header.
         map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')

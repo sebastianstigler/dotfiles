@@ -56,6 +56,7 @@ return {
             ['<C-l>'] = require('telescope.actions').select_default, -- open file
           },
         },
+        path_display = { shorten = { len = 2, exclude = { -2, -1 } } },
       },
       pickers = {
         find_files = {
