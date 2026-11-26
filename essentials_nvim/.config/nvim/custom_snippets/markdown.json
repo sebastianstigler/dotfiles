@@ -1,0 +1,71 @@
+{
+  "note template": {
+    "prefix": [
+      "nt",
+      "notetemplate"
+    ],
+    "body": [
+      "---",
+      "date: \"${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}\"",
+      "tags:",
+      "    -",
+      "hubs:",
+      "    - \"[[${1}]]\"",
+      "urls:",
+      "    -",
+      "---",
+      "",
+      "# ${TM_FILENAME_BASE}",
+      "",
+      "${0}"
+    ],
+    "description": "Add Note template"
+  },
+  "extended note template": {
+    "prefix": [
+      "xnt"
+    ],
+    "body": [
+      "---",
+      "author: Sebastian Stigler <sebastian.stigler@hs-aalen.de>",
+      "date: \"${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}\"",
+      "papersize: A4",
+      "colorlinks: true",
+      "colorquote: true",
+      "numbersections: true",
+      "printkeywords: false",
+      "tags:",
+      "    -",
+      "hubs:",
+      "    - \"[[${1}]]\"",
+      "urls:",
+      "    -",
+      "---",
+      "",
+      "# ${TM_FILENAME_BASE}",
+      "",
+      "${0}"
+    ],
+    "description": "Add extended Note template"
+  },
+  "markdownlint-disable-file": {
+    "prefix": [
+      "mdlf"
+    ],
+    "body": [
+      "<!-- markdownlint-disable-file MD${1} -->"
+    ],
+    "description": "Disable markdown lint warning MDxxx for the whole file."
+  },
+  "markdownlint-disable-block": {
+    "prefix": [
+      "mdlf"
+    ],
+    "body": [
+      "<!-- markdownlint-disable MD${1} -->",
+      "${0}",
+      "<!-- markdownlint-enable-file MD${1} -->"
+    ],
+    "description": "Disable markdown lint warning MDxxx for a block of lines."
+  }
+}
